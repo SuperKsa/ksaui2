@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="./ksa.js" module="vue_2.7.14.js ksaui.js icon.css ksaui.css player.js"></script>
+    <script type="text/javascript" src="./ui.js"></script>
+    <link rel="stylesheet" href="./ui/blue.css">
+</head>
+<body style="background: #083863">
+<script type="text/html" id="dom">
+    <div id="body" class="ks-flex" vertical>
+        <header>
+            <div class="ks-clear ">
+                <div class="ks-fl ks-fw2 ks-p2">
+                    {{UI__.title}}
+                    <span class="ks-ml ks-f2 ks-fw0 ks-text-orange" v-if="UI__.progress > 0 && UI__.progress < 100 && UI__.progressText">({{I__.progressText}})</span>
+                </div>
+                <div class="ks-fr ks-f3 ks-fl-sub ks-mr1-sub win_header_btn">
+                    <span class="ri ri-subtract ks-pointer" data-type="minimize"></span>
+                    <span class="ri ri-aspect-ratio ks-pointer ui-frame-hdbtn-fullscreen" data-type="fullscreen"></span>
+                    <span class="ri ri-close ks-pointer" data-type="close"></span>
+                </div>
+            </div>
+            <div class="ks-progress" :class="UI__.progress ==0 || UI__.progress >= 100 ? 'ks-progress-hide' : ''">
+                <div :style="'width:'+UI__.progress+'%'"><span>{{UI__.progress}}%</span></div>
+            </div>
+        </header>
+        <div id="content">
+
+            <div class="ks-p">
+                <canvas id="visualizer" width="400" height="200"></canvas>
+                <canvas id="waveform" width="600" height="200"></canvas>
+                <ks-btn @click="audio" icon="mic">录音</ks-btn>
+                <ks-form>
+                    <ks-form-item label="昵称"><input type="ks-text" placeholder="请输入"></ks-form-item>
+                    <ks-form-item label="文件"><input type="ks-file" text="选择文件"></ks-form-item>
+                    <ks-form-item label="头像"><input type="ks-pic" text="选择图片"></ks-form-item>
+                    <ks-form-item label="年龄"><input type="ks-number" placeholder="请输入数字"></ks-form-item>
+                    <ks-form-item label="生日"><input type="ks-date" placeholder="请输入日期"></ks-form-item>
+                    <ks-form-item label="密码"><input type="ks-password" placeholder="请输入密码"></ks-form-item>
+                    <ks-form-item label="个人介绍"><textarea type="ks-textarea" maxlength="100"
+                                                             placeholder="请输入"></textarea></ks-form-item>
+
+                    <ks-form-item label="启用验证"><input type="ks-switch" text="是|否"></ks-form-item>
+                    <ks-form-item label="兴趣">
+                        <select type="ks-select">
+                            <option value="0">看书</option>
+                            <option value="1">游泳</option>
+                        </select>
+                    </ks-form-item>
+                    <ks-form-item label="性别">
+                        <input type="ks-radio" name="sex" text="男">
+                        <input type="ks-radio" name="sex" text="女">
+                    </ks-form-item>
+                    <ks-form-item label="职业">
+                        <input type="ks-checkbox" text="互联网">
+                        <input type="ks-checkbox" text="教育行业">
+                        <input type="ks-checkbox" text="实体行业">
+                    </ks-form-item>
+                    <ks-form-item label="职业">
+                        <ks-input-group>
+                            <ks-btn>选项 1</ks-btn>
+                            <ks-btn>选项 2</ks-btn>
+                            <ks-btn>选项 3</ks-btn>
+                        </ks-input-group>
+                    </ks-form-item>
+
+
+                    <ks-form-item label=" ">
+                        <ks-btn @click="testBtn">大按钮</ks-btn>
+                        <ks-btn reset>重置</ks-btn>
+                    </ks-form-item>
+                </ks-form>
+
+                <div>
+                    <ks-btn @click="testBtn">大按钮</ks-btn>
+                    <ks-btn size="small">中按钮</ks-btn>
+                    <ks-btn size="mini">小按钮</ks-btn>
+                </div>
+                <div>
+                    <ks-alert type="success">警告：操作错误</ks-alert>
+                    <ks-alert type="error">警告：操作错误</ks-alert>
+                    <ks-alert type="info">警告：操作错误</ks-alert>
+                    <ks-alert>警告：操作错误</ks-alert>
+                </div>
+                <div>
+                    <ks-tag>标签</ks-tag>
+                    <ks-tag close>标签 可关闭</ks-tag>
+                    <ks-tag edit>标签 可编辑</ks-tag>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+
+    !function(){
+        KSAUI.data = {};
+        $.tpl({
+            el: '#dom',
+            data: KSAUI,
+            init() {
+
+            },
+            methods: {
+                testBtn(e) {
+                    const ele = $(e.target);
+                    const btnTxt = ele.text();
+                    const loadTxt = ele.attr('loading') || '请稍后';
+                    ele.disabled(true).text(loadTxt).prepend('<span class="ks-loading"></span>');
+                    pywebview.api.testBtn().then((res) => {
+                        ele.disabled(false).text(btnTxt).find('span').remove();
+                        debug('完成', res);
+                    }).catch((res) => {
+                        console.error('错误', res)
+                    });
+                },
+                audio() {
+                    // 获取Canvas元素和绘制上下文
+                    const visualizerCanvas = document.getElementById("visualizer");
+                    const visualizerCtx = visualizerCanvas.getContext("2d");
+                    const waveformCanvas = document.getElementById("waveform");
+                    const waveformCtx = waveformCanvas.getContext("2d");
+
+                    // 音频频谱的条形数量
+                    const bars = 200;
+
+                    // 创建音频上下文对象
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                    // 获取用户的麦克风输入
+                    navigator.mediaDevices.getUserMedia({audio: true})
+                        .then(stream => {
+                            // 创建音频输入节点
+                            const source = audioContext.createMediaStreamSource(stream);
+
+                            // 创建音频分析节点
+                            const analyser = audioContext.createAnalyser();
+                            analyser.fftSize = 512 * 16;
+                            const bufferLength = analyser.frequencyBinCount;
+                            const dataArray = new Uint8Array(bufferLength);
+
+                            // 连接音频输入节点和音频分析节点
+                            source.connect(analyser);
+
+                            // 开始录音和频谱绘制
+                            draw();
+
+                            function draw() {
+                                // 清空画布
+                                visualizerCtx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+                                waveformCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
+
+                                // 获取音频频谱数据
+                                analyser.getByteFrequencyData(dataArray);
+
+                                // 计算每个条形的宽度和高度
+                                const barWidth = visualizerCanvas.width / bars;
+
+                                for (let i = 0; i < bufferLength; i++) {
+                                    const frequencyValue = dataArray[i];
+                                    const barHeight = (frequencyValue / 255) * (visualizerCanvas.height - 20);
+                                    const x = barWidth * i;
+                                    const y = visualizerCanvas.height - barHeight - 50;
+
+                                    // 计算条形颜色，由黄色到天蓝色过渡
+                                    const yellowValue = Math.floor((dataArray[i] / 256) * 255);
+                                    const cyanValue = Math.floor((1 - dataArray[i] / 256) * 255);
+                                    const color = `rgb(255, ${yellowValue}, ${cyanValue})`;
+
+
+                                    visualizerCtx.fillStyle = color;
+                                    visualizerCtx.fillRect(x, y, barWidth, barHeight);
+                                }
+
+                                // 获取音频时域数据
+                                analyser.getByteTimeDomainData(dataArray);
+
+                                // 绘制声波折线图
+                                waveformCtx.strokeStyle = "rgba(255,255,255, .5)";
+                                waveformCtx.lineWidth = 2;
+                                waveformCtx.beginPath();
+                                const sliceWidth = waveformCanvas.width * 1.0 / bufferLength;
+                                let x = 0;
+                                for (let i = 0; i < bufferLength; i++) {
+                                    const v = dataArray[i] / 128.0;
+                                    const y = v * waveformCanvas.height / 2;
+                                    if (i === 0) {
+                                        waveformCtx.moveTo(x, y);
+                                    } else {
+                                        waveformCtx.lineTo(x, y);
+                                    }
+                                    x += sliceWidth;
+                                }
+                                waveformCtx.lineTo(waveformCanvas.width, waveformCanvas.height / 2);
+                                waveformCtx.stroke();
+
+                                // 继续下一帧绘制
+                                requestAnimationFrame(draw);
+                            }
+                        })
+                        .catch(err => console.error("Error accessing microphone:", err));
+                }
+            }
+        });
+    }();
+</script>
+</body>
+</html>
