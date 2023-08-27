@@ -1418,16 +1418,17 @@ function debugTime(key) {
             }
             start = aObj.start;
             //距离第一次的时间间隔
-            var progress = timestamp - start;
+            var progress = parseInt(timestamp - start);
+            let callNumber;
             //记录与上一次动画的间隔时间
             if (!_Atime) {
-                _Atime = timestamp - lastTime;
+                _Atime = parseInt(timestamp - lastTime);
             }
             var callResult;
             if (_Atime > 0 && progress <= Atimes) {
                 _Aindex++;
                 if (numbersIsArr) {
-                    var callNumber = [];
+                    callNumber = [];
                     $.loop(numbersIsArr, function (value) {
                         callNumber.push(_stepVal(value, progress));
                     });
@@ -1479,7 +1480,6 @@ function debugTime(key) {
                         if (Math.abs(callVal) > Math.abs(distance)) {
                             return false;
                         }
-
                         e.scrollTop = top + callVal;
                     });
                 } else {
@@ -3208,8 +3208,9 @@ function debugTime(key) {
 
     var requireScript = document.currentScript ? document.currentScript : document.scripts[document.scripts.length - 1];
     var requireDir = requireScript.src.substr(0, requireScript.src.lastIndexOf('/') + 1);
+
     $.requireDir = requireDir;
-    $.require = function (srcs) {
+    $.require = function (srcs, refresh) {
         if (!$.isArray(srcs)) {
             srcs = $.explode(' ', srcs, '');
         }
@@ -3221,6 +3222,9 @@ function debugTime(key) {
             ext = ext ? ext.toLowerCase() : ext;
             var isCSS = ext === '.css';
             value = 'module/' + value + (ext ? '' : '.js');
+            if(refresh){
+                value += '?'+(new Date().getTime())
+            }
             var file = document.createElement(isCSS ? 'link' : 'script');
             if (isCSS) {
                 file.href = requireDir + value;
@@ -3244,7 +3248,7 @@ function debugTime(key) {
             }
         });
     }
-    $.require(requireScript.getAttribute('module'));
+    $.require(requireScript.getAttribute('module'), requireScript.getAttribute('refresh') !== undefined);
     
     return $;
 })(document);

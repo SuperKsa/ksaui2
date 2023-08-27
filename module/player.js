@@ -17,6 +17,7 @@ $.playerClass = class {
         this.Playing = {}; //正在播放的对象
         this._loadCall = loadCall;
         this._errCall = errCall;
+        this.permission = false; //是否获得用户交互授权
         this.loadSounds(mediaMap);
     }
 
@@ -143,5 +144,8 @@ $.playerClass = class {
 $.player = null;
 $.playerInit = function (mediaMap, loadCall, errCall) {
     $.player = new $.playerClass(mediaMap, loadCall, errCall);
+    $(document).click(function () {
+        $.player.permission = true;
+    });
     return $.player;
 }

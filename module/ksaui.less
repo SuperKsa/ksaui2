@@ -11,7 +11,24 @@
 }
 
 @ColorList: primary, success, warning, danger, blue, indigo, purple, pink, red, orange, yellow, green, teal, cyan, white, gray, light, black;
-@ColorListValue: #4792fb, #5ab32d, #ea981d, #ff6a5b, #4792fb, #727cf5, #6b5eae, #ff679b, #E12318, #ff9041, #f9bc0d, #5abd48, #14d0ef, #00d4c0, #fff, #9e9e9e, #bec3ca, #474d56;
+@ColorListValue: var(primary),
+var(--success),
+var(--warning),
+var(--danger),
+var(--blue),
+var(--indigo),
+var(--purple),
+var(--pink),
+var(--red),
+var(--orange),
+var(--yellow),
+var(--green),
+var(--teal),
+var(--cyan),
+var(--white),
+var(--gray),
+var(--light),
+var(--black);
 @ColorListLength: length(@ColorList);
 
 //字体图标名称
@@ -38,11 +55,15 @@ ks-content {
 
 //============== 全局样式整理 ==============
 :root {
-  /*== 定义颜色 ==*/
+  --wght: 400;
+  --BEVL: 80;
+
+  /*== 全局 ==*/
+  --background: #ffffff; /*页面背景*/
   --defcolor: #4a4a4a; /*通用主色*/
   --textcolor: #9e9e9e; /*浅色文字*/
   --highcolor: #4792fb; /*高亮主色 突出*/
-
+  /*== 色系 ==*/
   --blue: #4792fb; /* 蓝色 blue*/
   --indigo: #727cf5; /* 靛青色 indigo*/
   --purple: #6b5eae; /* 紫色 purple*/
@@ -57,41 +78,41 @@ ks-content {
   --gray: #9e9e9e; /* 灰色 gray*/
   --light: #bec3ca; /* 浅白 light*/
   --black: #474d56; /* 暗色 black*/
-  /*== 定义边框色 ==*/
-  --bordercolor: #e4e8ec; /* 全局边框色 */
-  --background-light: #fff; /* 全局背景 浅色 */
-  --background-gray: #f2f2f2; /* 全局背景 浅灰色 */
-  --background-dark: #333333; /* 全局背景 深色 */
-
-
-  /*色调支持*/
   --primary: #4792fb; /*主色*/
   --success: #5ab32d; /*成功*/
   --warning: #ea981d; /*警告*/
-  --danger: #ff6a5b; /*错误/危险*/
+  --danger: #ff6a5b; /*错误*/
 
+  /*== 边框 ==*/
+  --bordercolor: #e4e8ec; /* 全局边框色 */
+  /*== 背景 ==*/
+  --background-light: #fff; /* 全局背景 浅色 */
+  --background-gray: #f2f2f2; /* 全局背景 浅灰色 */
+  --background-dark: #333333; /* 全局背景 深色 */
+  /*== 文字 ==*/
   --link-color: #545454; /*超链接颜色*/
   --text-color: #4a4a4a; /*全局文字颜色*/
   --text-color-light: #4792fb; /*全局文字颜色 - 高亮*/
   --text-color-gray: #999; /*全局文字颜色 - 浅色*/
   --text-color-dark: #222; /*全局文字颜色 - 深色*/
-
-  --input-text: #fff; /*表单输入框颜色*/
-  --input-border: rgba(255, 255, 255, 0.3); /*表单边框*/
+  /*== 表单 ==*/
+  --input-text: #555; /*表单输入框颜色*/
+  --input-border: #dfdfdf; /*表单边框*/
   --input-border-hover: #a2cfff; /*表单边框 鼠标经过*/
-  --input-background: rgba(255, 255, 255, 0.3); /*表单背景*/
-  --input_placeholder: rgba(255, 255, 255, 0.6); /*表单提示文字*/
-  --input-disabled-background: rgba(0, 0, 0, 0.2); /*表单被禁用的背景色*/
-  --input-disabled-border: rgba(255, 255, 255, 0.1); /*表单被禁用的边框色*/
-
+  --input-background: #f2f2f2; /*表单背景*/
+  --input_placeholder: #999; /*表单提示文字*/
+  --input-disabled-background: rgba(0, 0, 0, 0.2); /*表单 被禁用 背景色*/
+  --input-disabled-border: rgba(255, 255, 255, 0.1); /*表单 被禁用 边框色*/
+  /*== 按钮 ==*/
   --btn-color: rgba(0, 0, 0, .6); /*按钮 文字颜色*/
   --btn-background: rgba(255, 255, 255, 0.9); /*按钮 背景*/
   --btn-border: rgba(255, 255, 255, 0.1); /*按钮 边框*/
 
   --default-transition: all 0.2s ease-in-out; /*普通UI动画值*/
-
-  --card-border-radius: 3px; /* 卡片元素 圆角值 */
-  --card-box-shadow: rgba(0, 0, 0, .5) 0 0 5px; /* 卡片元素 阴影配置 */
+  /*== 卡片 ==*/
+  --card-background : var(--background-light); /*卡片 背景*/
+  --card-border-radius: 3px; /* 卡片 圆角值 */
+  --card-box-shadow: rgba(0, 0, 0, .5) 0 0 5px; /* 卡片 阴影配置 */
 }
 
 * {
@@ -99,9 +120,6 @@ ks-content {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0)
 }
 
 article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
@@ -109,15 +127,14 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 }
 
 body, input, button, select, textarea, pre, code {
-  --wght: 400;
-  --BEVL: 80;
-  font-variation-settings: 'wght' var(--wght), 'BEVL' var(--BEVL);
   font-family: "阿里妈妈方圆体 VF Regular", "Microsoft YaHei", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: inherit;
   font-style: inherit;
   outline: none;
   color: inherit
 }
+
+body {background: var(--background); color: var(--text-color)}
 
 a, .ks-link, .ks-link-line {
   text-decoration: none;
@@ -231,7 +248,7 @@ ks-price {
 // 卡片
 ks-card {
   display: block;
-  background: var(--background-light);
+  background: var(--card-background);
   border-radius: var(--card-border-radius);
   border: var(--bordercolor) 1px solid;
   box-shadow: var(--card-box-shadow);
@@ -445,7 +462,7 @@ ks-navaction {
 //自由定位的layer样式调整 一般用于下拉选择
 .ks-layer[pos="0"] {
   border: var(--input-border) 1px solid;
-  background: rgba(0, 0, 0, .3);
+  background: rgba(255, 255, 255, .3);
   box-shadow: 0 5px 5px 0 rgba(154, 161, 171, .17);
   position: absolute;
   min-width: 120px;
@@ -1138,31 +1155,32 @@ ks-collapse {
       height: auto;
       cursor: pointer;
       outline: none;
-      padding: 6px 0;
+      width: 100%;
+      overflow: hidden;
+      &:before{
+        font-size: 1em;
+        line-height: 1.2em;
+        transition: all 0.3s ease-in-out;
+      }
+      &:not([icon])::before {
+        content: '\ea6d';
+        font-family: @iconfont;
+      }
+      &[icon-right]:before{
+        float: right;
+      }
     }
 
     > ks-collapse-content {
+      display: block;
       transition: all 0.1s ease-in-out;
       height: 0;
       overflow: hidden;
-    }
-
-    > ks-collapse-title:not([icon])::before {
-      content: '\ea6d';
-      float: left;
-      margin: .15em .4em;
-      font-family: @iconfont;
-      font-size: 1em;
-      line-height: 1.2em;
-      transition: all 0.3s ease-in-out;
-    }
-
-    > ks-collapse-content {
       opacity: 0;
-      transition: all 0.3s ease-in-out;
     }
 
-    &[active] > ks-collapse-title:not([icon])::before {
+
+    &[active] > ks-collapse-title:before {
       transform: rotate(90deg);
     }
 
@@ -1197,7 +1215,9 @@ ks-collapse {
     display: none
   }
 }
-
+/*公告类*/
+ks-announcement { display:block; height: 30px; line-height: 30px; overflow: hidden; position: relative}
+ks-announcement ul {margin-top: 0}
 
 //数字列表
 .ks-list-number {
@@ -2550,7 +2570,7 @@ ks-btn {
   font-size: 14px;
   text-align: center;
   background: var(--btn-background);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
   padding: 0 15px;
   letter-spacing: 1px;
   transition: .2s;
@@ -2765,8 +2785,8 @@ ks-btn-group {
       @Cval: extract(@ColorListValue, @i);
       &[color='@{Cname}'] > ks-btn {
         color: @Cval;
-        border-color: average(@Cval, #fff);
-        background: average(average(average(average(@Cval, #fff), #fff), #fff), #fff);
+        border-color: @Cval;
+        background: none;
       }
       .loop(@i+1);
     }
@@ -2782,7 +2802,7 @@ ks-tag {
   font-size: 14px;
   border-radius: 3px;
   vertical-align: middle;
-  background: #ecf5ff;
+  background: var(--background-light);
   color: var(--highcolor);
   position: relative;
 
@@ -2822,8 +2842,8 @@ ks-tag {
       @Cval: extract(@ColorListValue, @i);
       &[color='@{Cname}'] {
         color: @Cval;
-        border-color: average(@Cval, #fff);
-        background: average(average(average(average(@Cval, #fff), #fff), #fff), #fff);
+        border-color: @Cval;
+        background: none;
       }
       .loop(@i+1);
     }
@@ -3255,7 +3275,6 @@ input[type='number']::-webkit-inner-spin-button {
     position: relative;
     overflow: hidden;
     cursor: pointer;
-
     > em {
       margin: 0 10px 0 3px;
     }
@@ -3290,13 +3309,16 @@ input[type='number']::-webkit-inner-spin-button {
 
     &:checked ~ i:before {
       background: var(--highcolor);
-      color: var(--input-text);
+      color: #fff;
       border-color: var(--highcolor);
     }
 
-    &:disabled ~ i {
-      cursor: not-allowed;
-      opacity: .5;
+    &:disabled , &[readonly] {
+      pointer-events: none;
+      ~ i {
+        cursor: not-allowed;
+        opacity: .5;
+      }
     }
   }
 
@@ -3327,8 +3349,8 @@ input[type='number']::-webkit-inner-spin-button {
     border-radius: 100px;
     height: var(--height);
     line-height: var(--height);
-    background: rgba(0, 0, 0, .3);
-    color: var(--input-text);
+    background: rgba(0, 0, 0, .1);
+    color: var(--text-color-gray);
     display: inline-block;
     cursor: pointer;
 
@@ -3340,11 +3362,13 @@ input[type='number']::-webkit-inner-spin-button {
       width: var(--size);
       height: var(--size);
       background: #fff;
+
       border-radius: 20px;
       position: absolute;
       top: 50%;
       margin-top: calc(var(--size) / -2);
       left: 3px;
+      box-shadow: rgba(0,0,0, .3) 0 0 5px;
     }
 
     em:nth-of-type(2) {
@@ -3381,6 +3405,7 @@ input[type='number']::-webkit-inner-spin-button {
         background: var(--highcolor);
         padding-right: calc(var(--height) + 2px);
         padding-left: 15px;
+        color: #fff;
 
         &:before {
           left: 100%;
@@ -3472,6 +3497,193 @@ input[type='number']::-webkit-inner-spin-button {
       bottom: 0;
       left: 0;
       z-index: 3;
+    }
+  }
+}
+
+
+/* 表单 - 颜色选择器 */
+
+.ks-input-color {
+  position: relative;
+  > span { width: 26px; height:calc(100% - 9px); display: block; position: absolute; left: 3px; top: 5px; z-index: 10; cursor: pointer; background: #000; color: #fff;}
+  input {padding-left: 35px;}
+}
+
+.ks-layer-color {
+  background: #fff;
+  &[pos="0"] {background: #fff;}
+
+  .ks-layer-color-content {
+    width: 320px;
+
+    .ks-layer-color-pancel {
+      width: 100%;
+      padding-bottom: 55%;
+      position: relative;
+      border-radius: 2px 2px 0px 0px;
+      overflow: hidden;
+    }
+
+    .ks-layer-color-pancel ._pancel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0px;
+    }
+
+    .ks-layer-color-tools {
+      padding: 0 16px 20px;
+    }
+
+    ._saturation-white {
+      background: -webkit-linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+      background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    ._saturation-black {
+      background: -webkit-linear-gradient(to top, #000, rgba(0, 0, 0, 0));
+      background: linear-gradient(to top, #000, rgba(0, 0, 0, 0));
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    ._color_selector {
+      height: 10px;
+      background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);
+      background: -webkit-linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);
+    }
+
+    .hue-vertical {
+      background: linear-gradient(to top, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);
+      background: -webkit-linear-gradient(to top, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);
+    }
+
+    ._pickerBtn {
+      position: absolute;
+      top: 0%;
+      left: 100%;
+      cursor: default;
+    }
+
+    ._pickerBtn > div {
+      width: 12px;
+      height: 12px;
+      border-radius: 6px;
+      box-shadow: rgb(255, 255, 255) 0px 0px 0px 1px inset;
+      transform: translate(-6px, -6px);
+    }
+
+    ._picker {
+      position: absolute;
+      left: 0%;
+    }
+
+    ._picker > div {
+      width: 12px;
+      height: 12px;
+      border-radius: 6px;
+      transform: translate(-6px, -1px);
+      background-color: rgb(248, 248, 248);
+      box-shadow: rgba(0, 0, 0, 0.37) 0px 1px 4px 0px;
+    }
+
+    ._alpha_selector {
+      padding: 0px 2px;
+      position: relative;
+      height: 100%;
+      background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 100%);
+    }
+
+    ._alpha_tools {
+      background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAADFJREFUOE9jZGBgEGHAD97gk2YcNYBhmIQBgWSAP52AwoAQwJvQRg1gACckQoC2gQgAIF8IscwEtKYAAAAASUVORK5CYII=');
+      height: 10px;
+      margin-top: 5px;
+    }
+
+
+    ._flex {
+      display: flex;
+      align-items: center;
+      height: 40px;
+    }
+
+    ._showcolor {
+      width: 45px;
+    }
+
+    ._showcolor > div {
+      width: 26px;
+      height: 26px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    ._preview_color {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px inset;
+      z-index: 2;
+    }
+
+    ._select_color {
+      height: 10px;
+      position: relative;
+    }
+
+    ._select_color > div {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+    }
+
+    ._color-input {
+      position: relative;
+    }
+
+    ._color-input input {
+      font-size: 11px;
+      color: rgb(51, 51, 51);
+      width: 100%;
+      border-radius: 2px;
+      border: none;
+      box-shadow: rgb(218, 218, 218) 0px 0px 0px 1px inset;
+      height: 21px;
+      text-align: center;
+    }
+
+    ._color-input span {
+      text-transform: uppercase;
+      font-size: 11px;
+      line-height: 11px;
+      color: rgb(150, 150, 150);
+      text-align: center;
+      display: block;
+      margin-top: 12px;
+    }
+    ._inputWrap {
+      flex: 1; display: flex; margin-left: -6px;
+      > *{
+        flex: auto;
+        &:nth-of-type(1) {
+          width: 80px; flex:none;
+        }
+      }
+
     }
   }
 }
@@ -3915,11 +4127,18 @@ ks-dot {
 }
 
 .ks-fw1 {
-  font-weight: 500
+  font-weight: 500;
+  --wght: 200;
 }
 
 .ks-fw2 {
-  font-weight: bold
+  font-weight: bold;
+  --wght: 500;
+}
+
+.ks-fw3 {
+  font-weight: bold;
+  --wght: 800;
 }
 
 //字号
@@ -4906,7 +5125,7 @@ ks-line[label]:after {
 
 /* ============== 其他杂项 ============== */
 /* Flexbox 布局 */
-.ks-flex {
+ks-flex, .ks-flex {
   display: flex;
 
   &[vertical] {

@@ -732,8 +732,7 @@ $.ksauiRenderTree = {};
                     //后退事件监听
                     option.backEvent && $.BackEvent('KsaLayer' + id, '#ks-layer-' + id);
 
-                    //show回调函数
-                    $.isFunction(option.show) && option.show(_this.layer, id);
+
 
                     //N秒自动关闭
                     if (option.outTime > 0) {
@@ -742,9 +741,13 @@ $.ksauiRenderTree = {};
                         }, option.outTime * 1000 + 50);
                     }
                     _this.pos();
+                    _this.pos();
                     window.setTimeout(function(){
                         _this.pos();
+                        //show回调函数
+                        $.isFunction(option.show) && option.show(_this.layer, id);
                     }, 200);
+
 
                 });
 
@@ -1223,6 +1226,190 @@ $.ksauiRenderTree = {};
       const parts = value.toString().split('.');
       parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
       return symbols + parts.join('.');
+    }
+    /**
+     * 颜色处理 RGBA 转 HEX
+     * @param rgba
+     * @returns {string}
+     */
+    $.rgba2hex = function(rgba){
+        // 将r、g、b、a映射到0-255的整数范围内
+        let hex = [
+            Math.round(rgba.r).toString(16),
+            Math.round(rgba.g).toString(16),
+            Math.round(rgba.b).toString(16)
+        ];
+        // 确保每个部分都是两位数
+        hex.map(function(str, i) {
+            if (str.length == 1) {
+                hex[i] = '0' + str;
+            }
+        });
+
+        // 如果透明度小于255，将其添加到颜色代码中
+        if (rgba.a < 1) {
+            // 将alpha通道映射到0-255的整数范围内
+            let alpha = Math.round(rgba.a * 255).toString(16);
+            hex.push(alpha);
+        }
+        return hex.join('');
+    }
+    /**
+     * 颜色处理 将HEX解析为RGBA
+     * @param hex
+     * @returns {{a: number, r: number, b: number, g: number}}
+     */
+    $.hex2rgba = function (hex) {
+        // 移除可能存在的 # 符号
+        hex = hex.replace(/^#/, '');
+
+        // 将颜色代码分解为r、g、b和alpha（如果存在）部分
+        var r, g, b, a;
+
+        if (hex.length === 3) {
+            // 处理缩写的颜色代码（例如：#RGB）
+            r = parseInt(hex[0] + hex[0], 16);
+            g = parseInt(hex[1] + hex[1], 16);
+            b = parseInt(hex[2] + hex[2], 16);
+            a = 1; // 默认alpha为1（不透明）
+        } else if (hex.length === 6) {
+            // 处理完整的颜色代码（例如：#RRGGBB）
+            r = parseInt(hex.slice(0, 2), 16);
+            g = parseInt(hex.slice(2, 4), 16);
+            b = parseInt(hex.slice(4, 6), 16);
+            a = 1; // 默认alpha为1（不透明）
+        } else if (hex.length === 8) {
+            // 处理包含alpha的颜色代码（例如：#RRGGBBAA）
+            r = parseInt(hex.slice(0, 2), 16);
+            g = parseInt(hex.slice(2, 4), 16);
+            b = parseInt(hex.slice(4, 6), 16);
+            a = parseInt(hex.slice(6, 8), 16) / 255; // 将alpha转换为0-1范围
+        } else {
+            // 非法的颜色代码
+            throw new Error('无效的颜色代码');
+        }
+
+        // 返回RGBA对象
+        return { r, g, b, a };
+    }
+    /**
+     * 颜色处理 将hex转为hsb
+     * @param hex
+     * @returns {{a: number, b: number, s: number, h: number}}
+     */
+    $.hex2hsb = function(hex){
+        return this.rgba2hsb(this.hex2rgba(hex));
+    }
+
+
+    /**
+     * 颜色处理 将RGBA颜色转换为HSB颜色
+     * @param r
+     * @param g
+     * @param b
+     * @param a
+     * @returns {{a: number, b: number, s: number, h: number}}
+     */
+    $.rgba2hsb = function(rgba) {
+        // 确保颜色分量在0-255范围内
+        let r = Math.min(255, Math.max(0, rgba.r));
+        let g = Math.min(255, Math.max(0, rgba.g));
+        let b = Math.min(255, Math.max(0, rgba.b));
+        let a = rgba.a >=0 ? rgba.a : 1;
+
+        // 计算最大值和最小值
+        var max = Math.max(r, g, b);
+        var min = Math.min(r, g, b);
+
+        // 计算亮度（brightness）
+        var brightness = (max / 255) * 100;
+
+        var hue, saturation;
+
+        if (max === 0) {
+            // 如果最大值为0，则饱和度为0，色调无意义
+            saturation = 0;
+            hue = 0; // 任何值都可以
+        } else {
+            // 计算饱和度
+            saturation = ((max - min) / max) * 100;
+
+            // 计算色调
+            if (max === r) {
+                hue = (60 * ((g - b) / (max - min)) + 360) % 360;
+            } else if (max === g) {
+                hue = (60 * ((b - r) / (max - min)) + 120) % 360;
+            } else {
+                hue = (60 * ((r - g) / (max - min)) + 240) % 360;
+            }
+        }
+
+        // 返回HSB颜色对象
+        return { h: hue, s: saturation, b: brightness, a: a };
+    };
+
+    /**
+     * 颜色处理 将HSB颜色转换为RGBA颜色
+     * @param hsb
+     * @returns {{a: number, r: number, b: number, g: number}}
+     */
+    $.hsb2rgba = function(hsb={}) {
+        var rgba = {}; // 改为RGBA对象
+        h = Math.round(hsb.h);
+        s = Math.round(hsb.s * 255 / 100);
+        b = Math.round(hsb.b * 255 / 100);
+        a = hsb.a >= 0 ? hsb.a : 1; // 添加Alpha通道，默认为1
+
+        if (s == 0) {
+            rgba.r = rgba.g = rgba.b = b;
+        } else {
+            var t1 = b;
+            var t2 = (255 - s) * b / 255;
+            var t3 = (t1 - t2) * (h % 60) / 60;
+
+            if (h == 360) h = 0;
+
+            if (h < 60) {
+                rgba.r = t1;
+                rgba.b = t2;
+                rgba.g = t2 + t3;
+            } else if (h < 120) {
+                rgba.g = t1;
+                rgba.b = t2;
+                rgba.r = t1 - t3;
+            } else if (h < 180) {
+                rgba.g = t1;
+                rgba.r = t2;
+                rgba.b = t2 + t3;
+            } else if (h < 240) {
+                rgba.b = t1;
+                rgba.r = t2;
+                rgba.g = t1 - t3;
+            } else if (h < 300) {
+                rgba.b = t1;
+                rgba.g = t2;
+                rgba.r = t2 + t3;
+            } else if (h < 360) {
+                rgba.r = t1;
+                rgba.g = t2;
+                rgba.b = t1 - t3;
+            } else {
+                rgba.r = 0;
+                rgba.g = 0;
+                rgba.b = 0;
+            }
+        }
+
+        return { r: Math.round(rgba.r), g: Math.round(rgba.g), b: Math.round(rgba.b), a: a };
+    };
+
+    /**
+     * 颜色处理 RGBA对象转字符串
+     * @param rgba object 必须的格式 {r:0, g:0, b:0, a:1}
+     * @returns {string}
+     */
+    $.rgba2str = function(rgba){
+        return 'rgba(' + rgba.r + ',' + rgba.g + ',' + rgba.b + ',' + rgba.a + ')';
     }
 
 
@@ -2944,6 +3131,345 @@ $.ksauiRenderTree = {};
         });
         bar.attr('animate_progress_id', autoID);
     }
+    /**
+     * 颜色选择器
+     * @param opt
+     */
+    $.colorPicker = function(domEle, changeFunc) {
+        const Picker = {
+        loadInputColor(){
+            this.input = this.ele.attr('value');
+            if(!this.input){
+                this.input = 'rgba(0, 0, 0, 1)';
+            }
+            var _this = this;
+            let rgba = {r: 0, g: 0, b: 0, a: 1};
+            if(this.input.indexOf('#') != -1 || (this.input.length >= 3 && this.input.length <=8)){
+                rgba = $.hex2rgba(this.input);
+                this.current_mode = 'hex'; // input框当前的模式
+            }else if(this.input.indexOf('rgba') != -1){
+                rgba = this.input.slice(5, -1).split(",");
+                rgba = {
+                    r : parseInt(rgba[0]),
+                    g : parseInt(rgba[1]),
+                    b : parseInt(rgba[2]),
+                    a : parseInt(rgba[3]),
+                };
+
+                this.current_mode = 'rgba'; // input框当前的模式
+            }
+
+            if(rgba){
+                this.rgba = {
+                    r: rgba.r,
+                    g: rgba.g,
+                    b: rgba.b,
+                    a: rgba.a
+                };
+            }else{
+                this.rgba = {r: 0, g: 0, b: 0, a: 1};
+            }
+            this.hsb = $.rgba2hsb(this.rgba);
+        },
+        init(opt) {
+
+            this.ele = $(domEle); // 绑定的外部元素
+            this.changeFunc = changeFunc;
+            this.elem_wrap = null; // 最外层容器
+            this.elem_colorPancel = null; // 色彩面板
+            this.elem_picker = null; // 拾色器色块按钮
+            this.elem_barPicker1 = null; // 颜色条
+            this.elem_showColor = null; // 显示当前颜色
+            this.elem_inputWrap = null; // 输入框外层容器
+
+            this.pancelLeft = 0;
+            this.pancelTop = 0;
+
+            this.downX = 0;
+            this.downY = 0;
+            this.moveX = 0;
+            this.moveY = 0;
+
+            this.pointLeft = 0;
+            this.pointTop = 0;
+            const _this = this;
+
+            this.ele.click(function () {
+                const ele = this;
+                if(this.__KSA_bind_layer_id){
+                    $.layerHide(this.__KSA_bind_layer_id);
+                    delete this.__KSA_bind_layer_id;
+                    return;
+                }
+                _this.loadInputColor();
+                var div = document.createElement("div");
+                div.innerHTML = _this.render();
+
+                _this.layer = $.layer({
+                    class : 'ks-layer-color',
+                    pos : this,
+                    closeBtn : 0,
+                    content : div,
+                    show(dom){
+                        let offset = $(_this.layer.dom).offset();
+                        _this.init_2(offset.left, offset.top, div);
+
+                    },
+                    close(){
+                        if(ele.__KSA_bind_layer_id){
+                            delete ele.__KSA_bind_layer_id;
+                        }
+                        _this.layer = null;
+                    }
+                });
+                this.__KSA_bind_layer_id = _this.layer.id;
+            });
+
+            $(document).on('mousedown', function(e){
+                if(_this.layer){
+                    if(!$(e.target).parents('.ks-layer-color').length){
+                        _this.layer.close();
+                    }
+                }
+            });
+        },
+        init_2(layer_left, layer_top, div){
+            const _this = this;
+            this.elem_wrap = div;
+            this.elem_colorPancel = div.getElementsByClassName("_pancel")[0];
+            this.pancel_width = this.elem_colorPancel.offsetWidth;
+            this.pancel_height = this.elem_colorPancel.offsetHeight;
+            this.elem_picker = div.getElementsByClassName("_pickerBtn")[0];
+            this.elem_showColor = div.getElementsByClassName("_preview_color")[0];
+            this.elem_barPicker1 = div.getElementsByClassName("_color-picker")[0];
+            this.elem_barPicker2 = div.getElementsByClassName("_alpha_picker")[0];
+            this.elem_inputWrap = div.getElementsByClassName("_inputWrap")[0];
+
+            this.pancelLeft = layer_left;
+            this.pancelTop = layer_top;
+            this.bindMove(this.elem_colorPancel, this.setPosition, true);
+            this.bindMove(this.elem_barPicker1.parentNode, this.setBar, false);
+            this.bindMove(this.elem_barPicker2.parentNode, this.setBar, false);
+
+/*
+            $(this.elem_wrap).input(function (e) {
+                var target = e.target, value = target.value;
+                _this.setColorByInput(value);
+            });
+            */
+            (this.input != '' && this.setColorByInput(this.input));
+        },
+        render: function () {
+            var tpl =
+                `
+            <div class="ks-layer-color-content">
+                <div class="ks-layer-color-pancel">
+                    <div class="_pancel" style="background:rgb(${this.rgba.r},${this.rgba.g},${this.rgba.b})">
+                        <div class="_saturation-white">
+                            <div class="_saturation-black">
+                            </div>
+                            <div class="_pickerBtn">
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ks-layer-color-tools" style="">
+                    <div class="_flex" style="">
+                        <div style="" class="_showcolor">
+                            <div style="">
+                                <div class="_preview_color" style=" background:rgb(${this.rgba.r},${this.rgba.g},${this.rgba.b}); "></div>
+                            </div>
+                        </div>
+                        <div style="-webkit-box-flex: 1; flex: 1 1 0%;">
+                            <div class="_select_color" style="">
+                                <div style="">
+                                    <div class="_color_selector" style="">
+                                        <div  class="_color-picker _picker" style="">
+                                            <div style="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="_alpha_tools" style="">
+                                <div class="_alpha_selector" style="">
+                                    <div  class="_alpha_picker _picker" style="">
+                                        <div style="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="_flex" style="display: flex;">
+                        <div class="_flex _inputWrap">
+                                ${this.getInputTpl()}
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            return tpl;
+        },
+        getInputTpl: function () {
+            var hex = "#" + $.rgba2hex($.hsb2rgba(this.hsb));
+            var current_mode_html = `
+                        <div>
+                            <div style="" class="_color-input">
+                                <input value="${hex}" spellcheck="false" style="">
+                                <span style="">hex</span>
+                            </div>
+                        </div>`;
+
+                    for (var i = 0; i <= 3; i++) {
+                        current_mode_html +=
+                            `<div>
+                            <div style="" class="_color-input">
+                                <input value="${this.rgba['rgba'[i]]}" spellcheck="false" style="">
+                                <span class="" style="">${'rgba'[i]}</span>
+                            </div>
+                        </div>`;
+                    }
+            return current_mode_html;
+        },
+        setPosition(x, y) {
+            var LEFT = parseInt(x - this.pancelLeft),
+                TOP = parseInt(y - this.pancelTop);
+
+            this.pointLeft = Math.max(0, Math.min(LEFT, this.pancel_width));
+            this.pointTop = Math.max(0, Math.min(TOP, this.pancel_height));
+
+            $(this.elem_picker).css({
+                left: this.pointLeft + "px",
+                top: this.pointTop + "px"
+            });
+            this.hsb.s = parseInt(100 * this.pointLeft / this.pancel_width);
+            this.hsb.b = parseInt(100 * (this.pancel_height - this.pointTop) / this.pancel_height);
+
+            this.setShowColor();
+            this.setValue(this.rgba);
+
+        },
+        setBar: function (elem, x) {
+            var elem_bar = elem.getElementsByTagName("div")[0],
+                rect = elem.getBoundingClientRect(),
+                elem_width = elem.offsetWidth,
+                X = Math.max(0, Math.min(x - rect.x, elem_width));
+
+            if (elem_bar === this.elem_barPicker1) {
+                $(elem_bar).css({
+                    left: X + "px"
+                });
+                this.hsb.h = parseInt(360 * X / elem_width);
+                this.setPancelColor(this.hsb.h);
+            } else {
+                $(elem_bar).css({
+                    left: X + "px"
+                });
+                this.rgba.a = parseInt(X / elem_width * 100) / 100;
+            }
+
+
+            this.setShowColor();
+            this.setValue(this.rgba);
+
+        },
+        setPancelColor: function (h) {
+            $(this.elem_colorPancel).css({
+                background: $.rgba2str($.hsb2rgba({h:h, s:100, b:100, a:1}))
+            });
+        },
+        setShowColor: function () {
+            var rgba = $.hsb2rgba(this.hsb);
+            rgba.a = this.rgba.a;
+            this.rgba.r = rgba.r;
+            this.rgba.g = rgba.g;
+            this.rgba.b = rgba.b;
+            $(this.elem_showColor).css({
+                background: $.rgba2str(rgba)
+            });
+
+        },
+        setValue: function (rgb) {
+            this.elem_inputWrap.innerHTML = this.getInputTpl();
+            let value = '';
+            if(rgb.a == 1){
+                value = "#" + $.rgba2hex(rgb);
+            }else{
+                value = $.rgba2str(rgb);
+            }
+            this.changeFunc(value);
+        },
+        setColorByInput: function (value) {
+            var _this = this;
+            switch (this.current_mode) {
+                case "hex":
+                    value = value.slice(1);
+                    if (value.length == 3) {
+                        value = '#' + value[0] + value[0] + value[1] + value[1] + value[2] + value[2];
+                        this.hsb = $.hex2hsb(value);
+                    } else if (value.length == 6) {
+                        this.hsb = $.hex2hsb(value);
+                    }
+                    break;
+                case 'rgba':
+                    this.hsb = $.rgba2hsb(this.rgba);
+            }
+            this.changeViewByHsb();
+        },
+        changeViewByHsb: function () {
+            this.pointLeft = parseInt(this.hsb.s * this.pancel_width / 100);
+            this.pointTop = parseInt((100 - this.hsb.b) * this.pancel_height / 100);
+            $(this.elem_picker).css({
+                left: this.pointLeft + "px",
+                top: this.pointTop + "px"
+            });
+
+            this.setPancelColor(this.hsb.h);
+            this.setShowColor();
+            $(this.elem_barPicker1).css({
+                left: this.hsb.h / 360 * (this.elem_barPicker1.parentNode.offsetWidth) + "px"
+            });
+            $(this.elem_barPicker2).css({
+                left: (this.hsb.a * this.elem_barPicker2.parentNode.offsetWidth) + "px"
+            });
+            let rgba = $.hsb2rgba(this.hsb);
+            let value = '';
+            if(rgba.a == 1){
+                value = "#" + $.rgba2hex(rgba);
+            }else{
+                value = $.rgba2str(rgba);
+            }
+            this.changeFunc(value);
+        },
+        bindMove: function (elem, fn, bool) {
+            const _this = this;
+            elem.addEventListener("mousedown", function (e) {
+                _this.downX = e.pageX;
+                _this.downY = e.pageY;
+                bool ? fn.call(_this, _this.downX, _this.downY) : fn.call(_this, elem, _this.downX, _this.downY);
+
+                document.addEventListener("mousemove", mousemove, false);
+
+                function mousemove(e) {
+                    _this.moveX = e.pageX;
+                    _this.moveY = e.pageY;
+                    bool ? fn.call(_this, _this.moveX, _this.moveY) : fn.call(_this, elem, _this.moveX, _this.moveY);
+                    e.preventDefault();
+                }
+
+                document.addEventListener("mouseup", mouseup, false);
+
+                function mouseup(e) {
+
+                    document.removeEventListener("mousemove", mousemove, false)
+                    document.removeEventListener("mouseup", mouseup, false)
+                }
+            }, false);
+        },
+    }
+        Picker.init();
+    }
 
     function ks_input_group(ele){
         ele = $(ele);
@@ -3163,7 +3689,7 @@ $.ksauiRenderTree = {};
             ele.after('<span data-digit="down" icon="subtract"></span><span data-digit="up" icon="add"></span>');
 
             var attrs = ele.attr();
-            !ele.val().length && !attrs.placeholder && ele.val(attrs.min || 0);
+            ele.val() == '' && !attrs.placeholder && ele.val(attrs.min || 0);
             var ef = ele.parent();
             !ef.hasClass('ks-input-arrow') && ef.addClass('ks-input-arrow');
             var min = $.floatval(attrs.min) || 0, //input最小值
@@ -3338,6 +3864,34 @@ $.ksauiRenderTree = {};
                     ths.addClass('ri-eye-fill').removeClass('ri-eye-off');
                 }
             });
+        });
+
+        $.render('input[type="ks-color"]', function (ele, isMonitor, monitorType) {
+            var t = $(ele), at = t.attr();
+            if(!isMonitor){
+                t.attr('type', 'text');
+                t.wrap($.tag('span',{type : 'password', class : 'ks-input ks-input-color', 'style':at.style, value:''}));
+
+                t.before('<span></span>');
+                let parent = t.parent();
+                let color = t.val();
+                if(color){
+                    parent.find('span').css('background', color);
+                    parent.attr('value', color);
+                }
+                $.colorPicker(parent, function (color) {
+                    t.val(color).attr('value', color);
+                    t.trigger('change');
+                });
+
+                t.change(function(){
+                    let color = t.val();
+
+                    parent.find('span').css('background', color);
+                    parent.attr('value', color);
+                });
+            }
+
         });
 
         $.render('textarea[type="ks-textarea"]', function (ele) {
@@ -3752,17 +4306,27 @@ $.ksauiRenderTree = {};
             $(ele).children().map(function (el) {
                 el = $(el);
                 var attr = el.attr();
+                let title = el.children('ks-collapse-title');
                 el.wrapInner('<ks-collapse-block></ks-collapse-block>').wrapInner('<ks-collapse-content></ks-collapse-content>');
-                el.prepend('<ks-collapse-title>' + (attr.label || '') + '</ks-collapse-title>')
+                if(!title.length){
+                    el.prepend('<ks-collapse-title>' + (attr.label || '') + '</ks-collapse-title>')
+                    title = el.children('ks-collapse-title');
+                }
+                el.children('ks-collapse-content').before(title);
+
 
                 var Pt = el.parent(), isAccordion = $.isset(Pt.attr('accordion'));
                 var content = el.children('ks-collapse-content');
+                let block = content.children('ks-collapse-block');
                 //如果默认打开，必须赋予实际高度值以完成css3动画
                 if (el.active()) {
                     content.height(content.children('ks-collapse-block').height(true, true));
                 }
-                el.children('ks-collapse-title').click(function () {
-                    var maxH = content.children('ks-collapse-block').height(true, true);
+                if(attr['icon-right']){
+                    title.addClass('ri-'+attr['icon-right']).attr('icon-right', true);
+                }
+                title.click(function () {
+                    var maxH = block.height(true, true);
                     if (el.active()) {
                         content.height(0);
                         el.active(false);
@@ -4205,6 +4769,8 @@ $.ksauiRenderTree = {};
             let attr = el.attr();
             el.announcement(attr.time);
         });
+
+
         //图标转换
         $.render('[icon]', function (ele) {
             var icon = ele.attributes.icon.value;

@@ -1,4 +1,4 @@
-export function Recorder(stream, config) {
+function Recorder(stream, config) {
     config = config || {};
     config.sampleBits = config.sampleBits || 16; //采样数位 8, 16
     config.sampleRate = config.sampleRate || 16000; //采样率16khz
@@ -142,11 +142,6 @@ export function Recorder(stream, config) {
     this.play = (audio) => {
         const blob = this.getBlob();
         audio.src = URL.createObjectURL(blob);
-    };
-
-    //上传
-    this.upload = () => {
-        return this.getBlob();
     };
 
     //音频采集

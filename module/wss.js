@@ -2,14 +2,15 @@ class WSSClient {
     /**
      * 创建一个WebSocket客户端实例
      * @param {string} url WebSocket服务器的URL
+     * @param {int} heartTime 心跳超时时间 秒
      */
-    constructor(url) {
+    constructor(url, heartTime = 1) {
         this.url = url;
         this.websocket = null;
         this.isReconnecting = false;
         this.pingInterval = null;
         this.reconnectDelay = 1000; // 重连延迟时间（毫秒）
-        this.pingIntervalTime = 150000; // 心跳间隔时间（毫秒）
+        this.pingIntervalTime = heartTime * 1000; // 心跳间隔时间（毫秒）
         this.PongLastTime = 0; //心跳 Pong 最后应答时间
         this.PingLastTime = 0; //心跳 Ping 最后发送时间
 
@@ -17,6 +18,7 @@ class WSSClient {
         this.connectCall = [];
         this.closeCall = [];
         this.messageCallback = [];
+        this.SendQueue = []; //待发送消息队列
     }
 
     /**
@@ -30,19 +32,21 @@ class WSSClient {
             this.connectEd = true;
             this.PongLastTime = new Date().getTime();
             this.startHeartbeat();
-            this.connectCall.forEach((func)=>{
+            this.connectCall.forEach((func) => {
                 func();
             });
             callFunc && callFunc();
         };
 
-        this.websocket.onclose = () => {
-            console.warn('WebSocket 连接已关闭');
+        this.websocket.onclose = (e) => {
+            const closeCode = e.code;
+            const closeReason = e.reason;
+            console.warn(`WebSocket 连接已关闭 关闭代码：${closeCode}，关闭原因：${closeReason}`);
 
             this.connectEd = false;
             this.stopHeartbeat();
             this.reconnect();
-            this.closeCall.forEach((func)=>{
+            this.closeCall.forEach((func) => {
                 func();
             });
         };
@@ -54,12 +58,12 @@ class WSSClient {
                 this.PongLastTime = new Date().getTime();
             } else {
                 let message = {};
-                try{
+                try {
                     message = JSON.parse(event.data);
-                    this.messageCallback.forEach((func)=>{
+                    this.messageCallback.forEach((func) => {
                         func(message);
                     });
-                }catch (e) {
+                } catch (e) {
                     console.error('消息回调报错', e)
                 }
 
@@ -86,13 +90,16 @@ class WSSClient {
      * 启动心跳检测
      */
     startHeartbeat() {
+        if (!this.pingIntervalTime) {
+            return;
+        }
         this.pingInterval = setInterval(() => {
             let time = new Date().getTime();
-            if(this.connectEd && time - this.PongLastTime > this.pingIntervalTime + 1000){
+            if (this.connectEd && time - this.PongLastTime > this.pingIntervalTime * 5) {
                 console.log('心跳超时，连接已断开', time - this.PongLastTime);
                 this.websocket.close();
             }
-            if(time - this.PingLastTime > this.pingIntervalTime){
+            if (time - this.PingLastTime > this.pingIntervalTime) {
                 this.sendPing();
             }
         }, 1000);
@@ -102,7 +109,7 @@ class WSSClient {
      * 停止心跳检测
      */
     stopHeartbeat() {
-        clearInterval(this.pingInterval);
+        this.pingInterval && clearInterval(this.pingInterval);
     }
 
     /**
@@ -110,7 +117,7 @@ class WSSClient {
      * @param {function} callback 收到消息时的回调函数
      */
     onMessage(callback) {
-        typeof callback ==  'function' && this.messageCallback.push(callback);
+        typeof callback == 'function' && this.messageCallback.push(callback);
     }
 
     /**
@@ -119,9 +126,22 @@ class WSSClient {
      * @param call
      */
     send(message, call) {
+
         if (this.websocket.readyState === WebSocket.OPEN) {
             const messageString = JSON.stringify(message);
-            this.websocket.send(encodeURIComponent(messageString));
+            const maxChunkSize = 65535; // 最大分片大小
+              for (let i = 0; i < messageString.length; i += maxChunkSize) {
+                const chunk = messageString.slice(i, i + maxChunkSize);
+                if (i + maxChunkSize >= messageString.length) {
+                  // 最后一个分片
+                  this.websocket.send(chunk);
+                } else {
+                  // 中间分片
+                  this.websocket.send(chunk, { fin: true });
+                }
+              }
+            // 发送数据
+            //this.websocket.send(messageString);
             console.log('发送消息:', message);
             call && call();
         } else {
@@ -136,19 +156,16 @@ class WSSClient {
         if (this.websocket.readyState === WebSocket.OPEN) {
             this.websocket.send('Ping');
             this.PingLastTime = new Date().getTime();
-        }else{
+        } else {
             console.warn('发送心跳 Ping 连接已断开');
         }
-
-
-
     }
 
-    onConnect(func){
-        typeof func ==  'function' && this.connectCall.push(func);
+    onConnect(func) {
+        typeof func == 'function' && this.connectCall.push(func);
     }
 
-    onClose(func){
-        typeof func ==  'function' && this.closeCall.push(func);
+    onClose(func) {
+        typeof func == 'function' && this.closeCall.push(func);
     }
 }
