@@ -29,6 +29,10 @@ class WSSClient {
 
         this.websocket.onopen = () => {
             console.log('WebSocket 连接已建立');
+            let Dialog = $('.ks-Dialog_warning');
+            if(Dialog.length){
+                $.layerHide(Dialog.attr('key'))
+            }
             this.connectEd = true;
             this.PongLastTime = new Date().getTime();
             this.startHeartbeat();
@@ -42,7 +46,9 @@ class WSSClient {
             const closeCode = e.code;
             const closeReason = e.reason;
             console.warn(`WebSocket 连接已关闭 关闭代码：${closeCode}，关闭原因：${closeReason}`);
-
+            if(!$('.ks-Dialog_warning').length){
+              $.Dialog('warning', '与服务器连接已丢失，请等待');
+           }
             this.connectEd = false;
             this.stopHeartbeat();
             this.reconnect();
@@ -80,7 +86,7 @@ class WSSClient {
 
         this.isReconnecting = true;
         console.log('尝试重新连接...');
-        this.reconnectTimeout = setTimeout(() => {
+        setTimeout(() => {
             this.connect();
             this.isReconnecting = false;
         }, this.reconnectDelay);

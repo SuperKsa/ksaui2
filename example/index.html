@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>DEMO</title>
+    <script module="vue_2.7.14.js ksaui.js icon.css ksaui.css player.js" src="../ksa.js" type="text/javascript"></script>
+    <style>
+        html, body {height: 100%}
+
+        .demo-logo {width: 100%; height: 80px; line-height: 80px; font-size: 30px; background: rgba(0, 0, 0, .6); color: #fff; text-align: center;}
+
+        #demo-body { max-width: 1200px; margin-left: 200px;}
+
+        .demo-sidebar { background: #0a5491; width: 160px; height: 100%; overflow: hidden; color: #7db1db; position: fixed; left: 0; top: 0;}
+
+        ks-collapse { padding: 0 10px;}
+
+        .demo-sidebar ks-collapse-block {}
+
+        .demo-sidebar ks-collapse-block > * {height: 30px; line-height: 30px; padding: 0 10px; cursor: pointer; user-select: none}
+
+        .demo-sidebar ks-collapse-block > *[active] { color: #fff}
+
+        .demo-sidebar ks-collapse-block > *:hover { background: rgba(255, 255, 255, .1)}
+
+        .toolsbar { position: fixed; right: 0; top: 0; background: #fff; font-size: 12px; box-shadow: rgba(0,0,0, .5) 0 0 10px; z-index: 99}
+        .toolsbar td {padding: 5px;}
+        .toolsbar textarea { width: 100%; height: 200px; color: #0000ff; border: none; background: #f2f2f2; padding: 3px;}
+    </style>
+    <script>
+        $(document).on('click', '.demo-sidebar ks-collapse-block > *[to]', function () {
+            let el = $(this);
+            el.active(true).siblings().active(false);
+            let to = $($(this).attr('to'));
+            let top = to.offset().top;
+            $('html').scrollTop(top, 200);
+        })
+    </script>
+
+</head>
+<body>
+
+
+
+<div class="demo-sidebar">
+    <div class="demo-logo">KSAUI</div>
+
+    <ks-collapse>
+        <div active icon-right="arrow-right-s" label="警示弹窗">
+            <ks-collapse-title class="ks-fw2" icon="arrow-right-s" icon-right>警示弹窗</ks-collapse-title>
+            <p to=".demo-id-Dialog">系统弹窗</p>
+            <p to=".demo-id-toast">轻提醒</p>
+        </div>
+        <div active label="表单元素">
+            <ks-collapse-title class="ks-fw2" icon="arrow-right-s" icon-right>表单元素</ks-collapse-title>
+            <p to=".demo-id-input-text">输入框</p>
+            <p to=".demo-id-input-file">文件选择</p>
+            <p to=".demo-id-input-pic">图片选择</p>
+            <p to=".demo-id-input-date">日期时间</p>
+            <p to=".demo-id-input-password">密码输入</p>
+            <p to=".demo-id-input-textarea">多行文本</p>
+            <p to=".demo-id-input-radio">单选</p>
+            <p to=".demo-id-input-checkbox">多选</p>
+            <p to=".demo-id-input-group">输入框组</p>
+            <p to=".demo-id-input-btn">按钮</p>
+            <p to=".demo-id-form">表单综合应用</p>
+        </div>
+        <div active icon-right="arrow-right-s" label="通用元素">
+            <ks-collapse-title class="ks-fw2" icon="arrow-right-s" icon-right>通用元素</ks-collapse-title>
+            <p to=".demo-id-flex">Flex布局</p>
+            <p to=".demo-id-alert">警示框</p>
+            <p to=".demo-id-tag">标签Tag</p>
+            <p to=".demo-id-page">分页展示</p>
+            <p to=".demo-id-star">评分类型</p>
+            <p to=".demo-id-price">货币处理</p>
+        </div>
+        <div active icon-right="arrow-right-s" label="UI增强">
+            <ks-collapse-title class="ks-fw2" icon="arrow-right-s" icon-right>UI增强</ks-collapse-title>
+            <p to=".demo-id-slide">轮播图</p>
+            <p to=".demo-id-table">Table表格</p>
+            <p to=".demo-id-announcement">滚动公告</p>
+            <p to=".demo-id-tab">Tab选项卡</p>
+
+        </div>
+    </ks-collapse>
+</div>
+<div id="demo-body">
+    <div class="ks-mb-sub ks-p" style="width: 100%;">
+        <ks-card class="demo-box-item demo-id-toast" label="警示弹窗 - 快速提示" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <ks-btn color="red" onclick="$.toast('系统出现紧急告警', 'warning')" size="small">警告</ks-btn>
+                    <ks-btn color="yellow" onclick="$.toast('系统出现紧急故障', 'error')" size="small">错误</ks-btn>
+                    <ks-btn color="green" onclick="$.toast('操作成功', 'success')" size="small">成功</ks-btn>
+                    <ks-btn color="blue" onclick="$.toast('您的操作已提交')" size="small">普通</ks-btn>
+                    <ks-btn onclick="$.toast('请稍后...', 'loading')" size="small">加载中</ks-btn>
+                </div>
+            </div>
+        </ks-card>
+        <ks-card class="demo-box-item demo-id-Dialog" label="系统弹窗" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <ks-btn color="red" onclick="$.Dialog('warning', 'GPU服务器[13]号已离线')" size="small">警告</ks-btn>
+                    <ks-btn color="yellow" onclick="$.Dialog('error', '系统出现紧急故障')" size="small">错误</ks-btn>
+                    <ks-btn color="green" onclick="$.Dialog('success', '操作成功', '<p>感谢您的反馈，我们将尽快与您联系。</p><p>我们的工作时间：9:00 - 18:00</p>')" size="small">成功</ks-btn>
+                    <ks-btn color="blue" onclick="$.Dialog('info', '您的操作已提交')" size="small">提醒</ks-btn>
+                </div>
+            </div>
+        </ks-card>
+        <ks-card class="demo-box-item" label="进度条" size="small">
+            <div class="ks-mb-sub">
+                <ks-progress showtext value="30"></ks-progress>
+                <ks-progress style="height: 5px" value="30"></ks-progress>
+                <ks-progress style="height: 3px" value="30"></ks-progress>
+            </div>
+        </ks-card>
+        <ks-card class="demo-box-item demo-id-input-btn" size="small">
+            <ks-card-title>
+                <div class="ks-fl">按钮展示</div>
+                <div class="ks-fr">
+                    <ks-input-group>
+                        <ks-btn color="blue" onclick="Demo_changeSize_btn(this, '.demoid-btn-box', '')" size="mini">大(默认)</ks-btn>
+                        <ks-btn onclick="Demo_changeSize_btn(this, '.demoid-btn-box', 'small')" size="mini">中</ks-btn>
+                        <ks-btn onclick="Demo_changeSize_btn(this, '.demoid-btn-box', 'mini')" size="mini">小</ks-btn>
+                    </ks-input-group>
+                </div>
+            </ks-card-title>
+            <div class="ks-mb-sub demoid-btn-box">
+                <div>
+                    <ks-btn>普通按钮</ks-btn>
+                    <ks-btn reset>重置</ks-btn>
+                    <ks-btn loading>加载中</ks-btn>
+                    <ks-btn color="blue">按钮</ks-btn>
+                    <ks-btn color="indigo">按钮</ks-btn>
+                    <ks-btn color="purple">按钮</ks-btn>
+                    <ks-btn color="red">按钮</ks-btn>
+                    <ks-btn color="orange">按钮</ks-btn>
+                    <ks-btn color="yellow">按钮</ks-btn>
+                    <ks-btn color="green">按钮</ks-btn>
+                    <ks-btn color="teal">按钮</ks-btn>
+                    <ks-btn color="cyan">按钮</ks-btn>
+                    <ks-btn color="white">按钮</ks-btn>
+                    <ks-btn color="gray">按钮</ks-btn>
+                    <ks-btn color="light">按钮</ks-btn>
+                    <ks-btn color="black">按钮</ks-btn>
+                </div>
+
+                <div>
+                    <ks-btn cap>胶囊按钮</ks-btn>
+                    <ks-btn cap reset>重置</ks-btn>
+                    <ks-btn cap loading>加载中</ks-btn>
+                    <ks-btn cap color="blue">按钮</ks-btn>
+                    <ks-btn cap color="indigo">按钮</ks-btn>
+                    <ks-btn cap color="purple">按钮</ks-btn>
+                    <ks-btn cap color="red">按钮</ks-btn>
+                    <ks-btn cap color="orange">按钮</ks-btn>
+                    <ks-btn cap color="yellow">按钮</ks-btn>
+                    <ks-btn cap color="green">按钮</ks-btn>
+                    <ks-btn cap color="teal">按钮</ks-btn>
+                    <ks-btn cap color="cyan">按钮</ks-btn>
+                    <ks-btn cap color="white">按钮</ks-btn>
+                    <ks-btn cap color="gray">按钮</ks-btn>
+                    <ks-btn cap color="light">按钮</ks-btn>
+                    <ks-btn cap color="black">按钮</ks-btn>
+                </div>
+                <div>
+                    <ks-btn cap disabled>按钮禁用</ks-btn>
+                    <ks-btn cap disabled reset>重置</ks-btn>
+                    <ks-btn cap disabled loading>加载中</ks-btn>
+                    <ks-btn cap color="blue" disabled>按钮</ks-btn>
+                    <ks-btn cap color="indigo" disabled>按钮</ks-btn>
+                    <ks-btn cap color="purple" disabled>按钮</ks-btn>
+                    <ks-btn cap color="red" disabled>按钮</ks-btn>
+                    <ks-btn cap color="orange" disabled>按钮</ks-btn>
+                    <ks-btn cap color="yellow" disabled>按钮</ks-btn>
+                    <ks-btn cap color="green" disabled>按钮</ks-btn>
+                    <ks-btn cap color="teal" disabled>按钮</ks-btn>
+                    <ks-btn cap color="cyan" disabled>按钮</ks-btn>
+                    <ks-btn cap color="white" disabled>按钮</ks-btn>
+                    <ks-btn cap color="gray" disabled>按钮</ks-btn>
+                    <ks-btn cap color="light" disabled>按钮</ks-btn>
+                    <ks-btn cap color="black" disabled>按钮</ks-btn>
+                </div>
+
+                <div>
+                    <ks-btn cap line>胶囊按钮</ks-btn>
+                    <ks-btn cap line reset>重置</ks-btn>
+                    <ks-btn cap line loading>加载中</ks-btn>
+                    <ks-btn cap color="blue" line>按钮</ks-btn>
+                    <ks-btn cap color="indigo" line>按钮</ks-btn>
+                    <ks-btn cap color="purple" line>按钮</ks-btn>
+                    <ks-btn cap color="red" line>按钮</ks-btn>
+                    <ks-btn cap color="orange" line>按钮</ks-btn>
+                    <ks-btn cap color="yellow" line>按钮</ks-btn>
+                    <ks-btn cap color="green" line>按钮</ks-btn>
+                    <ks-btn cap color="teal" line>按钮</ks-btn>
+                    <ks-btn cap color="cyan" line>按钮</ks-btn>
+                    <ks-btn cap color="white" line>按钮</ks-btn>
+                    <ks-btn cap color="gray" line>按钮</ks-btn>
+                    <ks-btn cap color="light" line>按钮</ks-btn>
+                    <ks-btn cap color="black" line>按钮</ks-btn>
+                </div>
+
+            </div>
+        </ks-card>
+        <ks-card class="demo-box-item demo-id-input-text" label="表单 - 普通输入框" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <div>普通类型</div>
+                    <div class="demo-code">
+                        <input placeholder="请输入" type="ks-text">
+                    </div>
+                </div>
+                <div>
+                    <div>带清理图标</div>
+                    <div class="demo-code">
+                        <input clear placeholder="请输入" type="ks-text">
+                    </div>
+                </div>
+                <div>
+                    <div>禁用状态</div>
+                    <div class="demo-code">
+                        <input disabled placeholder="请输入" type="ks-text">
+                    </div>
+                </div>
+                <div>
+                    <div>只读状态</div>
+                    <div class="demo-code">
+                        <input placeholder="请输入" readonly type="ks-text">
+                    </div>
+                </div>
+            </div>
+        </ks-card>
+
+        <ks-card class="demo-box-item demo-id-input-number" label="表单 - 数字输入框" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <div>普通类型</div>
+                    <div class="demo-code">
+                        <input type="ks-number">
+                    </div>
+                </div>
+                <div>
+                    <div>带提示</div>
+                    <div class="demo-code">
+                        <input placeholder="请输入" type="ks-number">
+                    </div>
+                </div>
+                <div>
+                    <div>禁用状态</div>
+                    <div class="demo-code">
+                        <input disabled placeholder="请输入" type="ks-number">
+                    </div>
+                </div>
+                <div>
+                    <div>只读状态</div>
+                    <div class="demo-code">
+                        <input placeholder="请输入" readonly type="ks-number">
+                    </div>
+                </div>
+            </div>
+        </ks-card>
+
+        <ks-card class="demo-box-item demo-id-input-date" label="表单 - 日期与时间" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <div>普通类型</div>
+                    <div class="demo-code">
+                        <input type="ks-date">
+                    </div>
+                </div>
+                <div>
+                    <div>带提示</div>
+                    <div class="demo-code">
+                        <input placeholder="请输入" type="ks-date">
+                    </div>
+                </div>
+                <div>
+                    <div>禁用状态</div>
+                    <div class="demo-code">
+                        <input disabled placeholder="请输入" type="ks-date">
+                    </div>
+                </div>
+                <div>
+                    <div>只读状态</div>
+                    <div class="demo-code">
+                        <input placeholder="请输入" readonly type="ks-date">
+                    </div>
+                </div>
+            </div>
+        </ks-card>
+
+        <ks-card class="demo-box-item demo-id-input-password" label="表单 - 密码输入框" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <div>普通类型</div>
+                    <div class="demo-code">
+                        <input type="ks-password">
+                    </div>
+                </div>
+                <div>
+                    <div>带提示</div>
+                    <div class="demo-code">
+                        <input placeholder="请输入" type="ks-password">
+                    </div>
+                </div>
+                <div>
+                    <div>显示密码</div>
+                    <div class="demo-code">
+                        <input placeholder="请输入" show type="ks-password">
+                    </div>
+                </div>
+                <div>
+                    <div>禁用状态</div>
+                    <div class="demo-code">
+                        <input disabled placeholder="请输入" type="ks-password">
+                    </div>
+                </div>
+                <div>
+                    <div>只读状态</div>
+                    <div class="demo-code">
+                        <input placeholder="请输入" readonly type="ks-password">
+                    </div>
+                </div>
+            </div>
+        </ks-card>
+
+        <ks-card class="demo-box-item demo-id-input-textarea" label="表单 - 多行输入框" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <div>普通类型</div>
+                    <div class="demo-code">
+                        <textarea type="ks-textarea"></textarea>
+                    </div>
+                </div>
+                <div>
+                    <div>带提示</div>
+                    <div class="demo-code">
+                        <textarea placeholder="请输入" type="ks-textarea"></textarea>
+                    </div>
+                </div>
+                <div>
+                    <div>禁用状态</div>
+                    <div class="demo-code">
+                        <textarea disabled placeholder="请输入" type="ks-textarea"></textarea>
+                    </div>
+                </div>
+                <div>
+                    <div>只读状态</div>
+                    <div class="demo-code">
+                        <textarea placeholder="请输入" readonly type="ks-textarea"></textarea>
+                    </div>
+                </div>
+            </div>
+        </ks-card>
+
+        <ks-card class="demo-box-item demo-id-input-file" label="表单 - 文件选择框" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <div>普通类型</div>
+                    <div class="demo-code">
+                        <input type="ks-file">
+                    </div>
+                </div>
+                <div>
+                    <div>自定义文字</div>
+                    <div class="demo-code">
+                        <input placeholder="请输入" text="请选择需要导入的文件" type="ks-file">
+                    </div>
+                </div>
+                <div>
+                    <div>指定文件类型</div>
+                    <div class="demo-code">
+                        <input ext="xls ppt doc docx" placeholder="请输入" text="请选择文档" type="ks-file">
+                    </div>
+                </div>
+                <div>
+                    <div>选择文件后立即提交</div>
+                    <div class="demo-code">
+                        <input api="http://test/uploadFile" ext="jpg gif png" placeholder="请输入" text="选择图片文件" type="ks-file">
+                    </div>
+                </div>
+                <div>
+                    <div>禁用状态</div>
+                    <div class="demo-code">
+                        <input disabled placeholder="请输入" type="ks-file">
+                    </div>
+                </div>
+                <div>
+                    <div>只读状态</div>
+                    <div class="demo-code">
+                        <input placeholder="请输入" readonly type="ks-file">
+                    </div>
+                </div>
+            </div>
+        </ks-card>
+
+        <ks-card class="demo-box-item demo-id-input-pic" label="表单 - 图片选择框" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <div>普通类型</div>
+                    <div class="demo-code">
+                        <input type="ks-pic">
+                    </div>
+                </div>
+                <div>
+                    <div>自定义文字</div>
+                    <div class="demo-code">
+                        <input placeholder="请输入" type="ks-pic">
+                    </div>
+                </div>
+                <div>
+                    <div>指定文件类型</div>
+                    <div class="demo-code">
+                        <input ext="jpg" placeholder="请输入" type="ks-pic">
+                    </div>
+                </div>
+                <div>
+                    <div>选择文件后立即提交</div>
+                    <div class="demo-code">
+                        <input api="http://test/uploadFile" ext="jpg gif png" placeholder="请输入" type="ks-pic">
+                    </div>
+                </div>
+                <div>
+                    <div>禁用状态</div>
+                    <div class="demo-code">
+                        <input disabled placeholder="请输入" type="ks-pic">
+                    </div>
+                </div>
+                <div>
+                    <div>只读状态</div>
+                    <div class="demo-code">
+                        <input placeholder="请输入" readonly type="ks-pic">
+                    </div>
+                </div>
+            </div>
+        </ks-card>
+
+        <ks-card class="demo-box-item demo-id-input-radio" label="表单 - 单选按钮" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <div>普通类型</div>
+                    <div class="demo-code">
+                        <input text="男" type="ks-radio">
+                        <input text="女" type="ks-radio">
+                    </div>
+                </div>
+                <div>
+                    <div>禁用状态</div>
+                    <div class="demo-code">
+                        <input disabled type="ks-radio">
+                    </div>
+                </div>
+                <div>
+                    <div>只读状态</div>
+                    <div class="demo-code">
+                        <input readonly type="ks-radio">
+                    </div>
+                </div>
+            </div>
+        </ks-card>
+
+        <ks-card class="demo-box-item demo-id-input-checkbox" label="表单 - 单选按钮" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <div>普通类型</div>
+                    <div class="demo-code">
+                        <input text="男" type="ks-checkbox">
+                        <input text="女" type="ks-checkbox">
+                    </div>
+                </div>
+                <div>
+                    <div>全选</div>
+                    <div class="demo-code">
+                        <input text="男" type="ks-checkbox">
+                        <input text="女" type="ks-checkbox">
+                        <input text="全选" type="ks-checkbox-all">
+                    </div>
+                </div>
+                <div>
+                    <div>禁用状态</div>
+                    <div class="demo-code">
+                        <input disabled placeholder="请输入" type="ks-checkbox">
+                    </div>
+                </div>
+                <div>
+                    <div>只读状态</div>
+                    <div class="demo-code">
+                        <input placeholder="请输入" readonly type="ks-checkbox">
+                    </div>
+                </div>
+            </div>
+        </ks-card>
+
+        <ks-card class="demo-box-item demo-id-input-switch" label="表单 - 开关按钮" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <div>普通类型</div>
+                    <div class="demo-code">
+                        <input type="ks-switch">
+                    </div>
+                </div>
+                <div>
+                    <div>指定文字</div>
+                    <div class="demo-code">
+                        <input text="启用" type="ks-switch">
+                    </div>
+                </div>
+                <div>
+                    <div>分别指定开关文字</div>
+                    <div class="demo-code">
+                        <input text="开|关" type="ks-switch">
+                        <input checked text="开|关" type="ks-switch">
+                    </div>
+                </div>
+                <div>
+                    <div>禁用状态</div>
+                    <div class="demo-code">
+                        <input disabled type="ks-switch">
+                    </div>
+                </div>
+                <div>
+                    <div>只读状态</div>
+                    <div class="demo-code">
+                        <input readonly type="ks-switch">
+                    </div>
+                </div>
+            </div>
+        </ks-card>
+
+        <ks-card class="demo-box-item demo-id-input-group" label="表单 - 表单组合" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <div>搜索框</div>
+                    <div class="demo-code">
+                        <ks-input-group>
+                            <i>快速搜索</i>
+                            <input placeholder="请输入..." type="ks-text" value="">
+                            <ks-btn icon="search">搜索</ks-btn>
+                        </ks-input-group>
+                    </div>
+                </div>
+                <div>
+                    <div>商品售价</div>
+                    <div class="demo-code">
+                        <ks-input-group>
+                            <i>最终售价</i>
+                            <input placeholder="请输入..." type="ks-text" value="">
+                            <i>人民币</i>
+                        </ks-input-group>
+                    </div>
+                </div>
+                <div>
+                    <div>更复杂组合</div>
+                    <div class="demo-code">
+                        <ks-input-group>
+                            <select type="ks-select">
+                                <option value="0">用户</option>
+                                <option value="1">新闻</option>
+                            </select>
+                            <input placeholder="请输入..." type="ks-text" value="">
+                            <input text="回收站" type="ks-checkbox">
+                            <input checked text="是|否" type="ks-switch">
+                            <input name="sex" text="男" type="ks-radio">
+                            <input name="sex" text="女" type="ks-radio">
+                            <ks-btn>搜索</ks-btn>
+                        </ks-input-group>
+                    </div>
+                </div>
+            </div>
+        </ks-card>
+
+        <ks-card class="demo-box-item demo-id-form" label="表单元素" size="small">
+            <ks-card-title>
+                <div class="ks-fl">表单综合应用</div>
+                <div class="ks-fr">
+                    <ks-input-group>
+                        <ks-btn color="blue" onclick="Demo_changeSize_toDom(this, '.demoid-form-box', '')" size="mini">默认</ks-btn>
+                        <ks-btn onclick="Demo_changeSize_toDom(this, '.demoid-form-box', 'small')" size="mini">紧凑</ks-btn>
+                    </ks-input-group>
+                </div>
+            </ks-card-title>
+            <ks-form class="demoid-form-box">
+                <ks-form-item label="文字输入"><input clear placeholder="请输入" type="ks-text"></ks-form-item>
+                <ks-form-item label="禁用输入"><input disabled placeholder="请输入" type="ks-text"></ks-form-item>
+                <ks-form-item label="数字输入"><input placeholder="请输入数字" type="ks-number"></ks-form-item>
+                <ks-form-item label="日期时间"><input placeholder="请输入日期" type="ks-date"></ks-form-item>
+                <ks-form-item label="密码输入"><input placeholder="请输入密码" type="ks-password"></ks-form-item>
+                <ks-form-item label="多行输入"><textarea maxlength="100" placeholder="请输入" type="ks-textarea"></textarea></ks-form-item>
+                <ks-form-item label="单选文件"><input api="/test" maxlength="40" text="选择文件" type="ks-file"></ks-form-item>
+                <ks-form-item label="多选文件"><input api="/test" ext="xls word ppt" maxlength="40" text="选择文件" type="ks-file"></ks-form-item>
+                <ks-form-item label="图片上传"><input api="/test" text="选择图片" type="ks-pic"></ks-form-item>
+                <ks-form-item label="颜色选择"><input text="选择颜色" type="ks-color"></ks-form-item>
+
+                <ks-form-item label="单选按钮">
+                    <input type="ks-switch">
+                    <input checked text="是|否" type="ks-switch">
+                    <input text="启用" type="ks-switch">
+                    <input disabled text="禁用状态" type="ks-switch">
+                </ks-form-item>
+                <ks-form-item label="多选按钮">
+                    <select type="ks-select">
+                        <option value="0">看书</option>
+                        <option value="1">游泳</option>
+                    </select>
+                    <select disabled type="ks-select">
+                        <option value="0">禁用的选项</option>
+                    </select>
+                </ks-form-item>
+                <ks-form-item label="单选按钮">
+                    <input name="sex" text="男" type="ks-radio">
+                    <input name="sex" text="女" type="ks-radio">
+                    <input disabled name="sex" text="禁用的选项" type="ks-radio">
+                </ks-form-item>
+                <ks-form-item label="多选按钮">
+                    <input text="互联网" type="ks-checkbox">
+                    <input text="教育行业" type="ks-checkbox">
+                    <input text="实体行业" type="ks-checkbox">
+                    <input disabled text="禁用的选项" type="ks-checkbox">
+                    <input text="全选" type="ks-checkbox-all">
+                </ks-form-item>
+                <ks-form-item label="输入框组">
+                    <div class="ks-mb-sub">
+                        <ks-input-group>
+                            <i>快速搜索</i>
+                            <input placeholder="请输入..." type="ks-text" value="">
+                            <ks-btn icon="search">搜索</ks-btn>
+                        </ks-input-group>
+                        <ks-input-group>
+                            <i>最终售价</i>
+                            <input placeholder="请输入..." type="ks-text" value="">
+                            <i>人民币</i>
+                        </ks-input-group>
+                        <ks-input-group>
+                            <select type="ks-select">
+                                <option value="0">用户</option>
+                                <option value="1">新闻</option>
+                            </select>
+                            <input placeholder="请输入..." type="ks-text" value="">
+                            <input text="回收站" type="ks-checkbox">
+                            <input checked text="是|否" type="ks-switch">
+                            <input name="sex" text="男" type="ks-radio">
+                            <input name="sex" text="女" type="ks-radio">
+                            <ks-btn>搜索</ks-btn>
+                        </ks-input-group>
+                    </div>
+                </ks-form-item>
+
+                <ks-form-item label=" ">
+                    <ks-btn color="blue" submit>提交</ks-btn>
+                    <ks-btn disabled loading>请稍后</ks-btn>
+                    <ks-btn reset>重置</ks-btn>
+                </ks-form-item>
+
+            </ks-form>
+        </ks-card>
+
+
+        <ks-card class="demo-box-item demo-id-alert" label="警示元素" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <ks-alert type="success">警告：操作错误</ks-alert>
+                </div>
+                <div>
+                    <ks-alert type="error">警告：操作错误</ks-alert>
+                </div>
+                <div>
+                    <ks-alert type="info">警告：操作错误</ks-alert>
+                </div>
+                <div>
+                    <ks-alert>警告：操作错误</ks-alert>
+                </div>
+            </div>
+        </ks-card>
+
+        <ks-card class="demo-box-item demo-id-tag" label="标签元素" size="small">
+            <div class="ks-mb-sub">
+                <div>
+                    <span>标签展示</span>
+                    <ks-tag>普通标签</ks-tag>
+                    <ks-tag close>可关闭</ks-tag>
+                    <ks-tag edit>可编辑</ks-tag>
+                </div>
+                <div>
+                    <span>标签颜色</span>
+                    <ks-tag color="blue">文字</ks-tag>
+                    <ks-tag color="indigo">文字</ks-tag>
+                    <ks-tag color="purple">文字</ks-tag>
+                    <ks-tag color="red">文字</ks-tag>
+                    <ks-tag color="orange">文字</ks-tag>
+                    <ks-tag color="yellow">文字</ks-tag>
+                    <ks-tag color="green">文字</ks-tag>
+                    <ks-tag color="teal">文字</ks-tag>
+                    <ks-tag color="cyan">文字</ks-tag>
+                    <ks-tag color="white">文字</ks-tag>
+                    <ks-tag color="gray">文字</ks-tag>
+                    <ks-tag color="light">文字</ks-tag>
+                    <ks-tag color="black">文字</ks-tag>
+                </div>
+            </div>
+        </ks-card>
+        <ks-card class="demo-box-item demo-id-page" label="分页展示" size="small">
+            <ks-card-title>
+                <div class="ks-fl">分页展示</div>
+                <div class="ks-fr">
+                    <ks-input-group>
+                        <ks-btn color="blue" onclick="Demo_changeSize_toDom(this, '.demoid-page-box', '')" size="mini">默认</ks-btn>
+                        <ks-btn onclick="Demo_changeSize_toDom(this, '.demoid-page-box', 'small')" size="mini">紧凑</ks-btn>
+                    </ks-input-group>
+                </div>
+            </ks-card-title>
+            <ks-page class="demoid-page-box" page="2" total="100"></ks-page>
+        </ks-card>
+
+        <ks-card class="demo-box-item demo-id-tab" label="Tab选项卡" size="small">
+            <ks-tab>
+                <ks-tab-item label="选项 1">
+                    选项内容 1
+                </ks-tab-item>
+                <ks-tab-item label="选项 2">
+                    选项内容 2
+                </ks-tab-item>
+                <ks-tab-item label="选项 3">
+                    选项内容 3
+                </ks-tab-item>
+                <ks-tab-item label="选项 4">
+                    选项内容 4
+                </ks-tab-item>
+                <ks-tab-item label="选项 5">
+                    选项内容 5
+                </ks-tab-item>
+                <ks-tab-item label="选项 6">
+                    选项内容 6
+                </ks-tab-item>
+            </ks-tab>
+        </ks-card>
+        <ks-card class="demo-box-item demo-id-flex" label="Flex布局" size="small">
+            <div>
+                <div class="ks-mb5-sub">
+                    <div class="ks-flex" style="height: 100px" vertical>
+                        <div style="height: 30px; background: rgba(0,229,231,0.3)">固定高度 30px</div>
+                        <div auto style="background: rgba(243,255,204,0.64); color: #000">
+                            <p>自适应高度</p>
+                            <p>自适应高度</p>
+                            <p>自适应高度</p>
+                            <p>自适应高度</p>
+                        </div>
+                    </div>
+                    <div class="ks-flex" style="height: 200px;" vertical>
+                        <div style="height: 30px; background: rgba(0,229,231,0.3)">固定高度 30px</div>
+                        <div auto class="ks-scroll-y" style="background: rgba(243,255,204,0.64); color: #000">
+                            <div>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                            </div>
+                        </div>
+                        <div style="height: 30px; background: rgba(0,229,231,0.3)">固定高度 30px</div>
+                    </div>
+
+                    <div class="ks-flex" style="height: 100px;">
+                        <div style="width: 120px; background: rgba(0,229,231,0.3)">左侧固定 120px</div>
+                        <div auto style="background: rgba(243,255,204,0.64); color: #000">
+                            <p>自适应高度</p>
+                            <p>自适应高度</p>
+                            <p>自适应高度</p>
+                            <p>自适应高度</p>
+                        </div>
+                    </div>
+
+                    <div class="ks-flex" style="height: 200px;">
+                        <div style="width: 120px; background: rgba(0,229,231,0.3)">左侧固定 120px</div>
+                        <div auto class="ks-scroll-y" style="background: rgba(243,255,204,0.64); color: #000">
+                            <div>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                                <p>自适应高度 区域可滚动</p>
+                            </div>
+                        </div>
+                        <div style="width: 140px; background: rgba(0,229,231,0.3)">右侧固定 140px</div>
+                    </div>
+
+                </div>
+            </div>
+        </ks-card>
+        <ks-card class="demo-box-item demo-id-collapse" label="折叠面板" size="small">
+            <ks-collapse>
+                <div label="北京市是中国的首都吗？">
+                    <p>测试一行数据</p>
+                    <p>测试一行数据</p>
+                    <p>测试一行数据</p>
+                    <p>测试一行数据</p>
+                </div>
+                <div label="北京市是中国的首都吗？">
+                    <p>测试一行数据</p>
+                    <p>测试一行数据</p>
+                    <p>测试一行数据</p>
+                    <p>测试一行数据</p>
+                </div>
+                <div label="北京市是中国的首都吗？">
+                    <p>测试一行数据</p>
+                    <p>测试一行数据</p>
+                    <p>测试一行数据</p>
+                    <p>测试一行数据</p>
+                </div>
+            </ks-collapse>
+        </ks-card>
+        <ks-card class="demo-box-item demo-id-price" label="价格展示" size="small">
+            <ks-price unit="$">2342342323.123</ks-price>
+            <ks-price unit="￥">2342342323.123</ks-price>
+        </ks-card>
+        <ks-card class="demo-box-item demo-id-star" label="评分" size="small">
+            <ks-star max="5" value="4"></ks-star>
+        </ks-card>
+        <ks-card class="demo-box-item" label="轮播图" size="small">
+            <div auto class="ks-slide" control progress="1" status style="height: 200px; width: 100%">
+                <div style="background: #2cb07b">内容 1</div>
+                <div style="background: #269dff">内容 2</div>
+                <div style="background: #a497de">内容 3</div>
+            </div>
+        </ks-card>
+        <ks-card class="demo-box-item demo-id-announcement" label="公告类" size="small">
+            <ks-announcement style="height: 120px;" time="3">
+                <div>
+                    <p>1 突发：太空探索中的新发现</p>
+                    <p>2 科技进步塑造未来</p>
+                    <p style="height: 60px; background: #c4d3ba">3 全球努力应对气候变化</p>
+                    <p>4 体育锦标赛圆满结束</p>
+                    <p>5 医疗创新改善患者护理</p>
+                    <p>6 艺术展览展示本地才华</p>
+                    <p>7 金融市场经历波动</p>
+                    <p>8 教育倡议创造更美好的明天</p>
+                    <p>9 旅游目的地，迎接您的下一个冒险</p>
+                    <p>10 娱乐产业宣布新作品发布</p>
+                </div>
+            </ks-announcement>
+        </ks-card>
+        <ks-card class="demo-box-item demo-id-table" label="表格" size="small">
+            <table class="ks-table" fixed-height="400px" style="width: 100%;">
+                <thead>
+                <tr>
+                    <td>姓名</td>
+                    <td>年龄</td>
+                    <td>性别</td>
+                    <td>所在地</td>
+                    <td>介绍</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>23岁</td>
+                    <td>男</td>
+                    <td>北京市</td>
+                    <td>一个慵懒的人</td>
+                </tr>
+                </tbody>
+            </table>
+        </ks-card>
+    </div>
+</div>
+
+
+<script>
+
+    function Demo_changeSize_btn(self, dom, val) {
+        $(self).attr('color', 'blue').siblings('ks-btn').removeAttr('color');
+        $(dom).find('ks-btn').attr('size', val);
+    }
+
+    function Demo_changeSize_toDom(self, dom, val) {
+        $(self).attr('color', 'blue').siblings('ks-btn').removeAttr('color');
+        $(dom).attr('size', val);
+    }
+
+    //模拟上传进度
+    $.API = function (url, postdata, fun, errfun, datatype, isBflow) {
+        //debug('开始测试上传', arguments);
+        let i = 0;
+        let s = setInterval(function () {
+            i++;
+            //debug('当前上传进度', i);
+            isBflow && isBflow(i);
+            if (i >= 100) {
+                clearInterval(s);
+                fun && fun();
+            }
+        }, 50);
+    }
+</script>
+
+
+<script>
+        $(document).ready(function () {
+            const cssText = `
+  /*== 全局 ==*/
+  --background: #ffffff; /*页面背景*/
+  --defcolor: #4a4a4a; /*通用主色*/
+  --textcolor: #9e9e9e; /*浅色文字*/
+  --highcolor: #4792fb; /*高亮主色 突出*/
+  /*== 色系 ==*/
+  --blue: #4792fb; /* 蓝色 blue*/
+  --indigo: #727cf5; /* 靛青色 indigo*/
+  --purple: #6b5eae; /* 紫色 purple*/
+  --pink: #ff679b; /* 粉色 pink*/
+  --red: #E12318; /* 红 red*/
+  --orange: #ff9041; /* 橙色 orange*/
+  --yellow: #f9bc0d; /* 黄色 yellow*/
+  --green: #5abd48; /* 绿色 green*/
+  --teal: #14d0ef; /* 天空蓝 teal*/
+  --cyan: #00d4c0; /* 青色 cyan*/
+  --white: #fff; /* 白色 white*/
+  --gray: #9e9e9e; /* 灰色 gray*/
+  --light: #bec3ca; /* 浅白 light*/
+  --black: #474d56; /* 暗色 black*/
+  --primary: #4792fb; /*主色*/
+  --success: #5ab32d; /*成功*/
+  --warning: #ea981d; /*警告*/
+  --danger: #ff6a5b; /*错误*/
+
+  /*== 边框 ==*/
+  --bordercolor: #e4e8ec; /* 全局边框色 */
+  /*== 背景 ==*/
+  --background-light: #fff; /* 全局背景 浅色 */
+  --background-gray: #f2f2f2; /* 全局背景 浅灰色 */
+  --background-dark: #333333; /* 全局背景 深色 */
+  /*== 文字 ==*/
+  --link-color: #545454; /*超链接颜色*/
+  --text-color: #4a4a4a; /*全局文字颜色*/
+  --text-color-light: #4792fb; /*全局文字颜色 - 高亮*/
+  --text-color-gray: #999; /*全局文字颜色 - 浅色*/
+  --text-color-dark: #222; /*全局文字颜色 - 深色*/
+  /*== 表单 ==*/
+  --input-text: #555; /*表单输入框颜色*/
+  --input-border: #dfdfdf; /*表单边框*/
+  --input-border-hover: #a2cfff; /*表单边框 鼠标经过*/
+  --input-background: #f2f2f2; /*表单背景*/
+  --input_placeholder: #999; /*表单提示文字*/
+  --input-disabled-background: rgba(0, 0, 0, 0.2); /*表单 被禁用 背景色*/
+  --input-disabled-border: rgba(255, 255, 255, 0.1); /*表单 被禁用 边框色*/
+  /*== 按钮 ==*/
+  --btn-color: rgba(0, 0, 0, .6); /*按钮 文字颜色*/
+  --btn-background: rgba(255, 255, 255, 0.9); /*按钮 背景*/
+  --btn-border: rgba(255, 255, 255, 0.1); /*按钮 边框*/
+
+  --default-transition: all 0.2s ease-in-out; /*普通UI动画值*/
+  /*== 卡片 ==*/
+  --card-background : var(--background-light); /*卡片 背景*/
+  --card-border-radius: 3px; /* 卡片 圆角值 */
+  --card-box-shadow: rgba(0, 0, 0, .5) 0 0 5px; /* 卡片 阴影配置 */
+  --card-box-filter: blur(15px); /* 卡片 背景模糊 */
+            `;
+            let conf = {};
+            let catName = '其他';
+            $.loop($.explode("\n", cssText), function (val) {
+                val = $.trim(val);
+
+                if(val.indexOf('/*==') === 0){
+                    let match = /\/\*==(.*?)==\*\//g.exec(val);
+
+                    if (match) {
+                        catName = match[1].trim();
+                    }
+                }
+                if(!conf[catName]){
+                    conf[catName] = {};
+                }
+                if (val.indexOf('--') === 0) {
+                    let match = /(--[^:]+)\:([^;]+);\s+\/\*(.*?)\*\//g.exec(val);
+                    if (match) {
+                        const variableName = match[1].trim();
+                        const variableValue = match[2].trim();
+                        const comment = match[3].trim();
+                        conf[catName][variableName] = {
+                            key: variableName,
+                            name : comment,
+                            value: variableValue,
+                        };
+                    }
+                }
+            });
+
+            let html = '<div class="toolsbar"><ks-form size="small"><table>';
+            $.loop(conf, function (value, name) {
+                html += `<tr><td colspan="3" class="ks-fw2">${name}</td></tr>`;
+                $.loop(value, function (val, key) {
+                    html += `<tr><td>${val.name}</td><td>`;
+                    if(val.value.indexOf('#') === 0 || val.value.indexOf('rgb') === 0){
+                        html += `<input type="ks-color" name="${val.key}" comment="${name}" value="${val.value}">`;
+                    }else if($.isNumber(val.value)){
+                        html += `<input type="ks-number" name="${val.key}" comment="${name}" value="${val.value}">`;
+                    }else{
+                        html += `<input type="ks-text" name="${val.key}" comment="${name}" value="${val.value}">`;
+                    }
+                    html += `</td></tr>`;
+                });
+
+            });
+            html += '</table></ks-form><div><textarea id="toolsbar-newcontent"></textarea></div></div>';
+            $('body').append(html);
+
+            $('.toolsbar input').change(function(){
+                let ele = $(this);
+                let name = ele.attr('name');
+                let value = ele.val();
+                let comment = ele.attr('comment');
+                if(!conf[comment] || !conf[comment][name]){
+                    return;
+                }
+                document.documentElement.style.setProperty(name, value);
+                conf[comment][name].value = value;
+                let css = [];
+                $.loop(conf, function (value, key) {
+                    css.push(`/*==== ${key} ===*/`);
+                    $.loop(value, function (val, name) {
+                        css.push(val.key +": "+val.value + "; /* "+name+" */");
+                    });
+                });
+                $('#toolsbar-newcontent').text(css.join("\n"));
+            });
+
+        });
+    </script>
+</body>
+</html>

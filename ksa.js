@@ -2601,7 +2601,7 @@ function debugTime(key) {
             var A = new XMLHttpRequest();
             if(A.upload){
                 A.upload.addEventListener('progress', function(event) {
-                  const percent = Math.round((event.loaded / event.total) * 100, 2);
+                  const percent = Math.round((event.loaded / event.total) * 100);
                   option.progress && option.progress(percent);
                 });
             }
@@ -3136,6 +3136,11 @@ function debugTime(key) {
         }else{
             return str.indexOf(val) !== -1;
         }
+    }
+
+    $.round = function(number, decimalPlaces = 0) {
+        const multiplier = 10 ** decimalPlaces;
+        return Math.round(number * multiplier) / multiplier;
     }
 
     $.strlen = function (value) {

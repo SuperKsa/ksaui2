@@ -102,30 +102,36 @@ ks-content {
   /*表单边框*/
   --input-border-hover: #a2cfff;
   /*表单边框 鼠标经过*/
-  --input-background: #f2f2f2;
+  --input-background: #f9f9f9;
   /*表单背景*/
   --input_placeholder: #999;
   /*表单提示文字*/
-  --input-disabled-background: rgba(0, 0, 0, 0.2);
+  --input-disabled-background: #efefef;
   /*表单 被禁用 背景色*/
-  --input-disabled-border: rgba(255, 255, 255, 0.1);
+  --input-disabled-border: #dfdfdf;
   /*表单 被禁用 边框色*/
   /*== 按钮 ==*/
   --btn-color: rgba(0, 0, 0, 0.6);
   /*按钮 文字颜色*/
   --btn-background: rgba(255, 255, 255, 0.9);
   /*按钮 背景*/
-  --btn-border: rgba(255, 255, 255, 0.1);
+  --btn-border: rgba(0, 0, 0, 0.1);
   /*按钮 边框*/
   --default-transition: all 0.2s ease-in-out;
   /*普通UI动画值*/
   /*== 卡片 ==*/
-  --card-background: var(--background-light);
+  --card-background: rgba(255, 255, 255, 0.9);
   /*卡片 背景*/
-  --card-border-radius: 3px;
+  --card-border-radius: 8px;
   /* 卡片 圆角值 */
-  --card-box-shadow: rgba(0, 0, 0, 0.5) 0 0 5px;
+  --card-box-shadow: rgba(0, 0, 0, 0.1) 0 0 8px;
   /* 卡片 阴影配置 */
+  --card-box-filter: none;
+  /* 卡片 背景模糊 */
+  --card-border: #efefef 1px solid;
+  /* 卡片 边框 */
+  --card-box-title-bordercolor: #f2f2f2 1px solid;
+  /* 卡片 标题 边框色 */
 }
 * {
   word-wrap: break-word;
@@ -157,9 +163,9 @@ code {
   font-style: inherit;
   outline: none;
   color: inherit;
+  font-variation-settings: 'BEVL' var(--BEVL);
 }
 body {
-  background: var(--background);
   color: var(--text-color);
 }
 a,
@@ -256,13 +262,14 @@ ks-card {
   display: block;
   background: var(--card-background);
   border-radius: var(--card-border-radius);
-  border: var(--bordercolor) 1px solid;
+  border: var(--card-border);
   box-shadow: var(--card-box-shadow);
+  backdrop-filter: var(--card-box-filter);
 }
 ks-card ks-card-title {
   font-size: 1.071428em;
   font-weight: 500;
-  border-bottom: var(--bordercolor) 1px solid;
+  border-bottom: var(--card-box-title-bordercolor);
 }
 .ks-box {
   background: #fff;
@@ -811,8 +818,8 @@ ks-tab ks-tab-content {
 }
 ks-tab ks-tab-title {
   width: 100%;
-  height: 40px;
-  line-height: 40px;
+  height: auto;
+  overflow: hidden;
   position: relative;
 }
 ks-tab ks-tab-title ks-tab-title-status {
@@ -829,13 +836,26 @@ ks-tab ks-tab-title ks-tab-title-status {
 }
 ks-tab ks-tab-title ks-tab-title-item {
   float: left;
-  padding: 0 10px;
+  display: inline-block;
+  padding: 0 10px 10px;
   min-width: 60px;
   user-select: none;
   text-align: center;
   margin-right: 10px;
   cursor: pointer;
   position: relative;
+}
+ks-tab ks-tab-title ks-tab-title-item:after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 0;
+  height: 3px;
+  background: none;
+}
+ks-tab ks-tab-title ks-tab-title-item[active]:after {
+  background: var(--primary);
 }
 ks-tab ks-tab-title ks-tab-title-item[active],
 ks-tab ks-tab-title ks-tab-title-item[active] a {
@@ -1277,6 +1297,7 @@ ks-avatar[square] {
 .ks-slide .ks-slide-item {
   width: auto;
   height: 100%;
+  display: block;
   z-index: 1;
   transition: all 0.6s ease-in-out;
   flex-shrink: 0;
@@ -2122,7 +2143,7 @@ ks-btn {
   font-size: 14px;
   text-align: center;
   background: var(--btn-background);
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.07);
   padding: 0 15px;
   letter-spacing: 1px;
   transition: 0.2s;
@@ -2188,7 +2209,7 @@ ks-btn:not([line])[color="white"][disabled] {
   color: rgba(0, 0, 0, 0.6);
 }
 ks-btn:not([line])[color='primary'] {
-  background: var(primary);
+  background: var(--primary);
 }
 ks-btn:not([line])[color='success'] {
   background: var(--success);
@@ -2247,8 +2268,8 @@ ks-btn[line] {
   background: none;
 }
 ks-btn[line][color='primary'] {
-  color: var(primary);
-  border-color: var(primary);
+  color: var(--primary);
+  border-color: var(--primary);
   background: none;
 }
 ks-btn[line][color='success'] {
@@ -2398,8 +2419,8 @@ ks-btn-group:not([line])[color] > ks-btn {
   border: 0;
 }
 ks-btn-group:not([line])[color='primary'] > ks-btn {
-  background: var(primary);
-  border-color: var(primary);
+  background: var(--primary);
+  border-color: var(--primary);
 }
 ks-btn-group:not([line])[color='success'] > ks-btn {
   background: var(--success);
@@ -2470,8 +2491,8 @@ ks-btn-group:not([line])[color='black'] > ks-btn {
   border-color: var(--black);
 }
 ks-btn-group[line][color='primary'] > ks-btn {
-  color: var(primary);
-  border-color: var(primary);
+  color: var(--primary);
+  border-color: var(--primary);
   background: none;
 }
 ks-btn-group[line][color='success'] > ks-btn {
@@ -2577,7 +2598,7 @@ ks-tag[cap] {
   border-radius: 1em;
 }
 ks-tag:not([line])[color='primary'] {
-  background: var(primary);
+  background: var(--primary);
   color: #fff;
 }
 ks-tag:not([line])[color='success'] {
@@ -2658,8 +2679,8 @@ ks-tag[line] {
   background: none;
 }
 ks-tag[line][color='primary'] {
-  color: var(primary);
-  border-color: var(primary);
+  color: var(--primary);
+  border-color: var(--primary);
   background: none;
 }
 ks-tag[line][color='success'] {
@@ -3087,6 +3108,7 @@ input[type='number']::-webkit-inner-spin-button {
   line-height: 20px;
   display: inline-block;
   vertical-align: middle;
+  user-select: none;
   /* 全选按钮 部分选中状态 */
 }
 .ks-checkbox * {
@@ -3148,6 +3170,7 @@ input[type='number']::-webkit-inner-spin-button {
 .ks-switch {
   display: inline-block;
   vertical-align: middle;
+  user-select: none;
 }
 .ks-switch * {
   font-style: normal;
@@ -3229,7 +3252,7 @@ input[type='number']::-webkit-inner-spin-button {
   margin-left: -26px;
 }
 .ks-switch[color='primary'] > input[type=checkbox]:checked ~ i {
-  background: var(primary);
+  background: var(--primary);
 }
 .ks-switch[color='success'] > input[type=checkbox]:checked ~ i {
   background: var(--success);
@@ -3855,7 +3878,7 @@ ks-dot:not(:empty) {
   margin: 0 0 0 -8px;
 }
 ks-dot[color='primary'] {
-  background: var(primary);
+  background: var(--primary);
 }
 ks-dot[color='success'] {
   background: var(--success);
@@ -4601,14 +4624,14 @@ ks-dot[color='black'] {
   margin-right: 25px;
 }
 .ks-bg-primary {
-  background-color: var(primary);
+  background-color: var(--primary);
 }
 .ks-text-primary {
-  color: var(primary);
+  color: var(--primary);
 }
 .ks-tag-primary {
-  color: var(primary);
-  border-color: var(primary);
+  color: var(--primary);
+  border-color: var(--primary);
 }
 .ks-bg-success {
   background-color: var(--success);
@@ -5257,7 +5280,7 @@ ks-progress {
   height: 10px;
   width: 100%;
   background: #ffffff;
-  box-shadow: inset rgba(0, 0, 0, 0.6) 0 0 5px, rgba(0, 0, 0, 0.3) 0 0 3px;
+  box-shadow: inset rgba(0, 0, 0, 0.2) 0 0 5px;
   border-radius: 999em;
   position: relative;
 }
@@ -5268,7 +5291,6 @@ ks-progress span {
   background: #5ab32d;
   float: left;
   position: relative;
-  box-shadow: rgba(0, 0, 0, 0.3) 0 0 3px;
   overflow: hidden;
 }
 ks-progress span:after {

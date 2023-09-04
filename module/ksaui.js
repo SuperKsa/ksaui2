@@ -1257,27 +1257,26 @@ $.ksauiRenderTree = {};
     /**
      * 颜色处理 将HEX解析为RGBA
      * @param hex
+     * @param a 透明值
      * @returns {{a: number, r: number, b: number, g: number}}
      */
-    $.hex2rgba = function (hex) {
+    $.hex2rgba = function (hex, a=1) {
         // 移除可能存在的 # 符号
         hex = hex.replace(/^#/, '');
 
         // 将颜色代码分解为r、g、b和alpha（如果存在）部分
-        var r, g, b, a;
+        var r, g, b;
 
         if (hex.length === 3) {
             // 处理缩写的颜色代码（例如：#RGB）
             r = parseInt(hex[0] + hex[0], 16);
             g = parseInt(hex[1] + hex[1], 16);
             b = parseInt(hex[2] + hex[2], 16);
-            a = 1; // 默认alpha为1（不透明）
         } else if (hex.length === 6) {
             // 处理完整的颜色代码（例如：#RRGGBB）
             r = parseInt(hex.slice(0, 2), 16);
             g = parseInt(hex.slice(2, 4), 16);
             b = parseInt(hex.slice(4, 6), 16);
-            a = 1; // 默认alpha为1（不透明）
         } else if (hex.length === 8) {
             // 处理包含alpha的颜色代码（例如：#RRGGBBAA）
             r = parseInt(hex.slice(0, 2), 16);
@@ -1626,7 +1625,15 @@ $.ksauiRenderTree = {};
         $.loop(dt, function (v, k) {
             v = v === undefined ? null : v;
             v = v === true ? k : v;
+            if($.isObject(v)){
+                let t2 = []
+                $.loop(v, function (v2, k2) {
+                    t2.push(`${k2}:${v2}`);
+                });
+                v = $.implode(';', t2);
+            }
             h += k && v != null ? (' ' + k + '="' + v + '"') : '';
+
         });
         h += '>' + (txt ? txt : '');
         if (!ed) {
@@ -3471,6 +3478,101 @@ $.ksauiRenderTree = {};
         Picker.init();
     }
 
+    /**
+     * 综合定时器
+     * 综合setTimeout|setInterval特性，为你的代码减少不必要的变量定义和代码逻辑
+     * -----------------------
+     * 如果回调函数返回 false 则定时器会立即自销毁
+     * -----------------------
+     * @param func 需要执行的回调函数 回调参数=开始运行到每次回调之间的毫秒数
+     * @param time 每次运行的间隔时间 (毫秒)
+     * @param num  运行多少次后销毁 0=始终运行
+     * @param immed 是否立即执行一次回调函数 true|false
+     * @author cr180
+     */
+    $.timer = function (func, time=1000, num=0, immed=false) {
+        if($.isFunction(func)){
+            let startTime = new Date().getTime();
+            let runNum = 0;
+            let S = window.setInterval(function () {
+                runNum ++;
+                if(func(new Date().getTime() - startTime) === false || (num > 0 && runNum === num)){
+                    S && clearInterval(S)
+                }
+            }, time);
+            if(immed === true){
+                func(0);
+            }
+            return S;
+        }
+    }
+
+    /**
+     * 短信验证码获取按钮逻辑绑定
+     * @param sendBtn 点击获取验证码的对象 该dom会被绑定click事件
+     * @param mobileInput 读取手机号的输入框对象 会从该dom读取val
+     * @param type 发送短信的类型 POST: type=传入值
+     * @param api 发送短信的接口地址 最终会POST：type={type}, mobile:{mobileInput的值}
+     * @param callBack 回调函数，将api地址的结果直接回调给该函数
+     */
+    $.btnBindSMSCode = function(sendBtn, mobileInput, type, api, callBack){
+        let smsTimesOut = 0;
+
+        sendBtn = $(sendBtn);
+        let sendBtnDefTxt = sendBtn.text();
+
+        sendBtn.click(function () {
+            let mobile = $(mobileInput).val();
+            if(!$.checkMobile(mobile)){
+                return $.toast('请填写正确的手机号');
+            }
+            if(smsTimesOut > 0){
+                return $.toast('请('+smsTimesOut+'秒)后再获取');
+            }
+            sendBtn.text('请稍后').disabled(true);
+            $.API(api, {
+                mobile: mobile,
+                type:type
+            }, (res) => {
+                if(res && $.isObject(res)){
+                    if(res.sendTime){
+                        smsTimesOut = res.sendTime;
+                        smsBtnTxt = '('+smsTimesOut+')';
+                        sendBtn.text(smsBtnTxt).disabled(true);
+                        //开始倒计时
+                        $.timer(function(){
+                            if(smsTimesOut <= 1){
+                                smsTimesOut = 0;
+                                sendBtn.text(sendBtnDefTxt).disabled(false);
+                                return false; //让定时器结束运行
+                            }else{
+                                smsTimesOut --;
+                                sendBtn.text('('+smsTimesOut+')').disabled(true);
+                            }
+                        }, 1000, 0, true);
+                    }
+                }
+                callBack && callBack(res);
+            }, function () {
+                sendBtn.text(sendBtnDefTxt).disabled(false);
+            });
+        });
+    }
+    /**
+     * 简单校验手机号
+     * @param val
+     * @param isCN
+     * @returns {boolean}
+     */
+    $.checkMobile = function (val, isCN=true) {
+        if(isCN){
+            if(val && val.length == 11 || /1[1-9]{10}/.test(val)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     function ks_input_group(ele){
         ele = $(ele);
         var attr = ele.attr();
@@ -4132,7 +4234,6 @@ $.ksauiRenderTree = {};
                 attrs.style = {};
             }
             attrs.style['--progress'] = '0';
-
             t.wrap($.tag('label',{class:'ks-file', style : attrs.style}));
             t.after('<span class="ks-input-title" icon="upload-cloud-2">'+tit+'</span>');
             let parentTag = t.parents('.ks-file');
@@ -4422,7 +4523,8 @@ $.ksauiRenderTree = {};
 
         //自定义组件 警示框渲染
         $.render('ks-alert', function (ele) {
-            var ele = $(ele), attrs = ele.attr(), isClose = $.isset(attrs.close);
+            ele = $(ele);
+            let attrs = ele.attr(), isClose = $.isset(attrs.close);
             var prehtml = '';
             if (attrs.title) {
                 prehtml += '<ks-alert-title>' + attrs.title + '</ks-alert-title>';

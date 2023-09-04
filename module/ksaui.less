@@ -11,7 +11,7 @@
 }
 
 @ColorList: primary, success, warning, danger, blue, indigo, purple, pink, red, orange, yellow, green, teal, cyan, white, gray, light, black;
-@ColorListValue: var(primary),
+@ColorListValue: var(--primary),
 var(--success),
 var(--warning),
 var(--danger),
@@ -99,20 +99,23 @@ ks-content {
   --input-text: #555; /*表单输入框颜色*/
   --input-border: #dfdfdf; /*表单边框*/
   --input-border-hover: #a2cfff; /*表单边框 鼠标经过*/
-  --input-background: #f2f2f2; /*表单背景*/
+  --input-background: #f9f9f9; /*表单背景*/
   --input_placeholder: #999; /*表单提示文字*/
-  --input-disabled-background: rgba(0, 0, 0, 0.2); /*表单 被禁用 背景色*/
-  --input-disabled-border: rgba(255, 255, 255, 0.1); /*表单 被禁用 边框色*/
+  --input-disabled-background: #efefef; /*表单 被禁用 背景色*/
+  --input-disabled-border: #dfdfdf; /*表单 被禁用 边框色*/
   /*== 按钮 ==*/
   --btn-color: rgba(0, 0, 0, .6); /*按钮 文字颜色*/
   --btn-background: rgba(255, 255, 255, 0.9); /*按钮 背景*/
-  --btn-border: rgba(255, 255, 255, 0.1); /*按钮 边框*/
+  --btn-border: rgba(0, 0, 0, 0.1); /*按钮 边框*/
 
   --default-transition: all 0.2s ease-in-out; /*普通UI动画值*/
   /*== 卡片 ==*/
-  --card-background : var(--background-light); /*卡片 背景*/
-  --card-border-radius: 3px; /* 卡片 圆角值 */
-  --card-box-shadow: rgba(0, 0, 0, .5) 0 0 5px; /* 卡片 阴影配置 */
+  --card-background : rgba(255,255,255, .9); /*卡片 背景*/
+  --card-border-radius: 8px; /* 卡片 圆角值 */
+  --card-box-shadow: rgba(0, 0, 0, 0.1) 0 0 8px; /* 卡片 阴影配置 */
+  --card-box-filter: none; /* 卡片 背景模糊 */
+  --card-border : #efefef 1px solid; /* 卡片 边框 */
+  --card-box-title-bordercolor : #f2f2f2 1px solid; /* 卡片 标题 边框色 */
 }
 
 * {
@@ -131,10 +134,11 @@ body, input, button, select, textarea, pre, code {
   font-size: inherit;
   font-style: inherit;
   outline: none;
-  color: inherit
+  color: inherit;
+  font-variation-settings:'BEVL' var(--BEVL)
 }
 
-body {background: var(--background); color: var(--text-color)}
+body {color: var(--text-color)}
 
 a, .ks-link, .ks-link-line {
   text-decoration: none;
@@ -250,13 +254,14 @@ ks-card {
   display: block;
   background: var(--card-background);
   border-radius: var(--card-border-radius);
-  border: var(--bordercolor) 1px solid;
+  border: var(--card-border);
   box-shadow: var(--card-box-shadow);
+  backdrop-filter: var(--card-box-filter);
 
   ks-card-title {
     font-size: 1.071428em;
     font-weight: 500;
-    border-bottom: var(--bordercolor) 1px solid;
+    border-bottom: var(--card-box-title-bordercolor);
   }
 }
 
@@ -959,8 +964,7 @@ ks-tab {
 
   ks-tab-title {
     width: 100%;
-    height: 40px;
-    line-height: 40px;
+    height: auto; overflow: hidden;
     position: relative;
 
     ks-tab-title-status {
@@ -978,14 +982,22 @@ ks-tab {
 
     ks-tab-title-item {
       float: left;
-      padding: 0 10px;
+      display: inline-block;
+
+      padding: 0 10px 10px;
       min-width: 60px;
       user-select: none;
       text-align: center;
       margin-right: 10px;
       cursor: pointer;
       position: relative;
-
+      &:after{
+        content: '';
+        position: absolute; left: 10px; right: 10px; bottom: 0; height: 3px; background:none;
+      }
+      &[active]:after{
+        background: var(--primary);
+      }
       &[active], &[active] a {
         color: var(--text-color-light)
       }
@@ -1542,7 +1554,7 @@ ks-avatar {
 
   .ks-slide-item {
     width: auto;
-    height: 100%;
+    height: 100%; display: block;
     z-index: 1;
     transition: all .6s ease-in-out;
     flex-shrink: 0
@@ -2570,7 +2582,7 @@ ks-btn {
   font-size: 14px;
   text-align: center;
   background: var(--btn-background);
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.07);
   padding: 0 15px;
   letter-spacing: 1px;
   transition: .2s;
@@ -3265,7 +3277,7 @@ input[type='number']::-webkit-inner-spin-button {
   line-height: 20px;
   display: inline-block;
   vertical-align: middle;
-
+  user-select: none;
   * {
     font-style: normal;
   }
@@ -3334,6 +3346,7 @@ input[type='number']::-webkit-inner-spin-button {
 .ks-switch {
   display: inline-block;
   vertical-align: middle;
+  user-select: none;
 
   * {
     font-style: normal;
@@ -5657,7 +5670,7 @@ ks-progress {
   height: 10px;
   width: 100%;
   background: rgba(255, 255, 255, 1);
-  box-shadow: inset rgba(0, 0, 0, .6) 0 0 5px, rgba(0, 0, 0, .3) 0 0 3px;
+  box-shadow: inset rgba(0, 0, 0, .2) 0 0 5px;
   border-radius: 999em;
   position: relative;
 
@@ -5668,7 +5681,6 @@ ks-progress {
     background: #5ab32d;
     float: left;
     position: relative;
-    box-shadow: rgba(0, 0, 0, .3) 0 0 3px;
     overflow: hidden;
 
     &:after {

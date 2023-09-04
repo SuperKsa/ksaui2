@@ -96,6 +96,9 @@ $.playerClass = class {
     play(key, loopCount=1, newPlay=false , call) {
         let self = this;
         function _pl(){
+            if(!$.player.permission){
+                return;
+            }
             let obj = self.createPlayer(self.sounds[key], loopCount, () => {
                 self.Playing[key] && delete self.Playing[key];
                 call && call();
@@ -148,4 +151,86 @@ $.playerInit = function (mediaMap, loadCall, errCall) {
         $.player.permission = true;
     });
     return $.player;
+}
+
+/**
+ *
+ * @param buffer
+ * @param loopCount
+ * @param initFunc
+ * @param endCallback
+ * @returns {player}
+ */
+$.playerBuffer = function (buffer, loopCount=1, initFunc, endCallback) {
+
+    function player(){
+        const self = this;
+
+        this.loopCounter = 0;
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        this.playing = 0;
+        this.currentTime = 0;
+        this.startTime = 0;
+
+        function createSource(){
+            self.source = self.audioContext.createBufferSource();
+            self.source.buffer = buffer;
+            self.source.connect(self.audioContext.destination);
+            self.source.loop = loopCount === -1 ? true : false;
+            self.source.onended = function () {
+                self.loopCounter++;
+                if (self.loopCounter > 0 && (loopCount === -1 || self.loopCounter < loopCount)) {
+                    source.start();
+                } else {
+                    endCallback && endCallback.apply(self, [self]);
+                }
+            };
+        }
+        createSource();
+
+        function getCurrentTime(){
+            self.currentTime = self.audioContext.currentTime - self.startTime;
+            self.playing && requestAnimationFrame(getCurrentTime);
+        }
+
+        this.play = (fromTime = 0, call) => {
+            if(this.playing === 2){ //如果是暂停状态
+                this.resume(); //继续播放
+            }else if(!this.playing){
+                if(!this.source){
+                    createSource();
+                }
+                this.playing = 1;
+                this.startTime = this.audioContext.currentTime - fromTime;
+                this.source.start(0, fromTime);
+                requestAnimationFrame(getCurrentTime);
+                call && call.apply(self, [self]);
+            }
+          }
+
+        this.pause = () => {
+            this.playing = 2;
+            this.audioContext.suspend();
+        }
+
+        this.resume = () => {
+            this.audioContext.resume();
+        }
+
+        this.stop = () => {
+            if (this.playing) {
+                this.playing = 0;
+                loopCounter = -99;
+                this.source.stop();
+                this.source.disconnect();
+                this.source = null;
+            }
+        }
+
+        initFunc && initFunc.apply(this, [this]);
+
+        return this;
+    }
+
+    return new player();
 }
