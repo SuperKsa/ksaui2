@@ -3227,29 +3227,18 @@ function debugTime(key) {
             ext = ext ? ext.toLowerCase() : ext;
             var isCSS = ext === '.css';
             value = 'module/' + value + (ext ? '' : '.js');
-            if(refresh){
-                value += '?'+(new Date().getTime())
-            }
+
             var file = document.createElement(isCSS ? 'link' : 'script');
             if (isCSS) {
+                if(refresh){
+                    value += '?'+(new Date().getTime())
+                }
                 file.href = requireDir + value;
                 file.type = 'text/css';
                 file.rel = 'stylesheet';
                 $(requireScript).after(file);
             } else {
-                $.ajax({
-                    url : requireDir + value,
-                    type : 'GET',
-                    async:false,
-                    dataType : 'script',
-                    success : function(res){
-                        file.text = res;
-                        file.type = 'text/javascript';
-
-                        $(requireScript).after(file);
-                        $(file).remove();
-                    }
-                });
+                import('./'+value);
             }
         });
     }

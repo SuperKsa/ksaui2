@@ -1,0 +1,250 @@
+/* KSAUI开始 */
+/* 重定义浏览器默认样式 Start */
+body { background: #f8f8f9; color:#535353; overflow-x: hidden;}
+
+
+.logo {width:100%; overflow: hidden; padding: 4px 0 0; text-align: center; font-weight: bold; color: #fff; font-size: 16px;}
+.logo .ksaicon {font-size: 24px;}
+
+
+/*初始框架*/
+html,body, #ksaosbox , .ks-sidebar, #body { height: 100%}
+#ksaosbox {width:100%; display: flex; flex-flow:row;}
+
+ks > ks-side { width: 170px}
+/*侧边栏*/
+.ks-sidebar { width:100%; background: #0b1c2f; overflow: hidden; color: rgba(255,255,255,0.7);}
+.ks-sidebar_box::-webkit-scrollbar {width: 0; height: 0; background-color: transparent;}
+.ks-sidebar_box dl { border-bottom: #071423 1px solid}
+.ks-sidebar_box dl > dd {transition:all 0.3s; height: 0; display: block; overflow: hidden}
+.ks-sidebar_box dl[active] > dd { height: auto}
+
+.ks-sidebar_box dl[active] dt, .ks-sidebar_box dd p[active] a { color: rgba(255,255,255,1)}
+.ks-sidebar_title { width: 100%; height: 50px; line-height: 50px; padding:0 20px 0 42px; cursor: pointer;}
+.ks-sidebar_title::before { float: right; font-size: 18px; transition:all 0.3s;}
+.ks-sidebar_box [active] > .ks-sidebar_title::before {transform:rotate(-180deg); }
+
+.ks-sidebar_box dt i[icon] { width:30px; font-size: 16px; float: left; text-align: center; margin-left: -30px;}
+
+.ks-sidebar_box dd { background: #061017; overflow: hidden;}
+.ks-sidebar_box dd p { height: 40px; line-height:40px; padding-left: 42px; }
+
+.ks-sidebar_box dd li ul {display: none}
+.ks-sidebar_box dd li[active] ul { display: block}
+.ks-sidebar_box dd li ul p { padding-left: 78px;}
+
+
+.ks-sidebar_box [data-url] {cursor: pointer; position: relative}
+.ks-sidebar_box [data-url] span { position: relative; z-index: 2}
+.ks-sidebar_box [data-url]:after { content: ''; position: absolute; left: 0; top: 0; width: 0; height: 100%; background: rgba(0,0,0,0.9); transition: all 0.2s; z-index: 1}
+.ks-sidebar_box [data-url]:hover:after {width: 100%; background: rgba(0,0,0,0.9)}
+.ks-sidebar_box [data-url][active]:after {width: 100%; background: #298df8;}
+
+
+#body { float: left; width:calc(100% - 200px); overflow: hidden; overflow-y: auto}
+
+.ks-admin-header, .logo { height: 40px; line-height: 40px;}
+.ks-sidebar_box, #content {width: 100%; height:100%; overflow: hidden; overflow-y: auto}
+#content { position: relative; z-index: 2}
+
+
+
+/*状态栏*/
+.ks-admin-header {position: relative; z-index: 3; background: linear-gradient(90deg,#0d3258,#0066d3,#0d3258); color: rgba(255,255,255,.75); overflow: hidden;}
+.ks-admin-header > * { height: 100%;}
+.ks-admin-header-left { width: calc(100% - 240px)}
+.ks-admin-header-right { max-width: 240px; overflow: hidden; float: right;}
+.ks-admin-header-right > * { float: left; padding: 0 12px;}
+.ks-admin-header-right > *:hover, .ks-admin-header-right > *[active] { background:rgba(255,255,255,.06);}
+/*当前位置*/
+ks-header > ks-navaction { margin: 0; padding: 12px 18px; box-shadow: rgba(0,0,0, 0.06) -1px 3px 5px; position: relative; background: #fff; z-index: 3}
+
+/*任务栏*/
+.ks-admin-taskbar { width: 100%; height: 100%; padding: 0 0 0 41px; position: relative; z-index: 99;}
+.ks-admin-taskbar-c { width: 100%; height: 100%; overflow: hidden; position: relative; transition:all 0.15s;}
+.ks-admin-taskbar-c ul { width: 99999%; height: 100%; position: absolute;left: 0; top: 0; transition:all 0.15s;}
+.ks-admin-taskbar-li {height:100%; overflow: hidden; float: left; padding: 0 12px; cursor: pointer; user-select: none; position: relative; text-align: center}
+.ks-admin-taskbar-li:hover { background: rgba(255,255,255, .05)}
+
+.ks-admin-taskbar-c li { margin-right: 1px;}
+.ks-admin-taskbar-c li { background: rgba(255,255,255, .05)}
+
+.ks-admin-taskbar-c li:after {content: ''; transition:all 0.15s; height: 3px; position: absolute; left: 4px; right: 4px; top: 0; background: rgba(255, 255, 255, .1)}
+
+.ks-admin-taskbar-c li:hover:after,
+.ks-admin-taskbar-c li[active]:after {right: 1px; left: 1px;}
+
+.ks-admin-taskbar-c li[active],
+.ks-admin-taskbar-home[active] { background: rgba(255,255,255, .15)}
+
+.ks-admin-taskbar-c li[active]:after,
+.ks-admin-taskbar-home[active]:after,
+.ks-admin-taskbar-c li:hover:after,
+.ks-admin-taskbar-home:hover:after{ background: #4792fb}
+
+.ks-admin-taskbar-c li i { font-size: 12px; display: inline-block; width: 15px; height: 15px; line-height: 15px; text-align: center; margin-left: 3px; vertical-align: middle}
+.ks-admin-taskbar-c li i:before { margin: 0; display: block; text-align: center}
+.ks-admin-taskbar-c li i:hover { background: rgba(255,255,255,.3); border-radius: 2em; color: #fff;}
+
+
+
+.ks-admin-taskbar-home, .ks-admin-taskbar-prev, .ks-admin-taskbar-next { position: absolute; left: 0; top: 0; width: 40px; padding: 0;}
+.ks-admin-taskbar-prev {left: 41px; display: none;}
+.ks-admin-taskbar-next {right: 0; left: initial; display: none;}
+.ks-admin-taskbar-home { left: 0;}
+
+.ks-admin-taskbar[more] { padding: 0 41px 0 82px;}
+.ks-admin-taskbar[more] .ks-admin-taskbar-prev,
+.ks-admin-taskbar[more] .ks-admin-taskbar-next { display: block}
+
+
+.ks-admin-iframe { border: none; width: 100%; height: 100%; position: absolute; left: 0; top: 0; right: 0; bottom: 0; display: none}
+.ks-admin-iframe iframe { width: 100%; height: 100%; position: absolute; left: 0; top: 0; bottom: 0; right: 0; border: none}
+.ks-admin-iframe[active] { display: block}
+
+
+
+/* End */
+.navation {}
+
+/*大框架*/
+.box {padding:18px;}
+.box-title {height:30px; line-height:30px; font-size:24px; margin-bottom:20px; }
+.box-title:before {width:5px; height:20px; float:left; background:#059aec; content:' '; margin:5px 15px 0 0; }
+.box-c {padding:10px 20px; }
+
+/*简单列表 标题 + 按钮 */
+.list_style_simple {}
+.list_tit { font-size: 24px; font-weight: bold}
+
+/*编辑器*/
+#editor { background: #fff; height: 500px;}
+#editor, #editor * {transition: none}
+#editor.ql-snow .ql-editor pre.ql-syntax { background: #999}
+
+/*分类列表页*/
+.ks-category td { height: 52px; padding:0 5px; border:none !important;}
+.ks-category td:first-child div { float: left; height: 50px; line-height: 50px;}
+.ks-category td:first-child ks-btn { margin:15px 0 0 20px; display: none; float: left;}
+.ks-category tr:hover td:first-child ks-btn { display: inline-block}
+
+.ks-category [class*=catesub-] td:first-child {position: relative; min-height: 50px; padding: 0}
+.ks-category .catesub-2 td:first-child {padding-left: 30px}
+.ks-category .catesub-3 td:first-child {padding-left: 70px}
+.ks-category [class*=catesub-] td:first-child:before { content: ''; position: absolute; left:30px; top: 0; width:1px; height:100%; display: block; background:#e4e8ec;}
+.ks-category [class*=catesub-] td:first-child div:before { content: ''; float: left; width: 15px; height:24px; margin-right: 15px; border-left: #e4e8ec 1px solid; border-bottom: #e4e8ec 1px solid;}
+
+
+
+
+
+/*封面图*/
+.ks-cover-upload, .ks-cover-btn {width:160px; height:160px; position:relative; text-align:center; border:#ededed 1px solid; background:#fff; float: left; margin: 0 15px 15px 0}
+.ks-cover-btn { color: #999; }
+.ks-cover-btn label {width:100%; height:100%; position:absolute; left:0; top:0; bottom: 0; z-index:2; cursor: pointer}
+.ks-cover-btn label:hover { background: #f2f2f2; border-color: #e4e8ec;}
+.ks-cover-btn label:before { display: block; width: 100%; height: 60px; line-height: 60px; text-align: center; color: #ccc; font-size: 40px; margin-top: 30px}
+
+.ks-cover-btn input { display: none}
+
+.ks-cover-input {display:none; position:absolute; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.1); cursor:pointer; }
+.ks-cover-upload:hover .ks-cover-input {display:block; }
+.ks-cover-img {max-width:100%; min-height:100%;}
+.ks-cover-bar {position:absolute; right:0; top:0; left: 0; height:30px; line-height:30px; background:rgba(0,0,0,0.8); color: #fff; padding: 0 10px;}
+.ks-cover-bar .r { cursor: pointer;}
+.ks-cover-bar .l {}
+
+
+
+
+/*页面级提示*/
+.ks-tip { background: #f2f2f2; padding: 15px; border-left: #aaa 5px solid; color: #999}
+.ks-tip p { margin-bottom: 5px;}
+.ks-tip p:last-child { margin-bottom: 0}
+.ks-tip p::before { content: '\f105'; margin-right: 5px; font-family: ksaui; color: #ccc}
+
+
+
+
+
+
+
+/*框架标题 h1 h2 h3*/
+/*
+.ks-h1 ,.ks-h2 ,.ks-h3 { height: 50px; line-height: 50px; font-size: 28px; color: #888; font-weight: normal; display: flex; width: 100%;}
+.ks-h2 { font-size: 24px;}
+.ks-h3 { font-size: 20px;}
+.ks-h1::before, .ks-h2::before, .ks-h3::before { content: ' '; flex: 0 30px; height: 1px; background-color: #e4e8ec; margin-top: 25px; margin-right: 15px;}
+.ks-h1::after, .ks-h2::after, .ks-h3::after { content: ' '; flex: 1; height: 1px; background-color: #e4e8ec; margin-top: 25px; margin-left: 15px;}
+.ks-h4 { width: 100%;}
+*/
+
+.ks-dot { width: 8px; height: 8px; border-radius: 100%; background: #ccc; display: inline-block}
+
+
+
+
+
+
+
+
+/*元素内部弹窗*/
+.ks-popup { position: absolute; left: 0; top: 40px; background: #fff; border:#e2e2e2 1px solid; border-radius: 3px; z-index: 2; box-shadow:0 5px 5px -1px #ccc; width:auto; max-height:400px; overflow:hidden; overflow-y:auto; display: none; }
+
+
+
+/*============ 图文风格 ============*/
+/*左图右标题介绍*/
+.ks-img-txt { padding-left: 45px;}
+.ks-img-txt > * {vertical-align: middle}
+.ks-img-txt:after { content: ''; clear: both; width: 100%; height: 0; display: block}
+.ks-img-txt ._img { float:left; margin-left:-45px; width: 40px; height: auto; max-height: 40px; overflow: hidden; border: #e4e8ec 1px solid;}
+.ks-img-txt ._img img { width: 100%; display: block}
+.ks-img-txt dt { float: left; overflow: hidden; height: 40px; line-height: 40px; width: 100%; min-width:80px;}
+
+.ks-img-txt ._img.o { border-radius: 100%;}
+
+
+
+/*============== 进度条 ==============*/
+/*
+<div class="ks-step" data-num="4">
+	<div class="ks-step-value" style="width: 50%"><span>等待收货</span></div>
+</div>
+
+<div class="ks-step" data-num="4">
+	<div class="ks-step-li a"><span>待付款</span></div>
+	<div class="ks-step-li a"><span>待发货</span></div>
+	<div class="ks-step-li a"><span>待收货</span></div>
+	<div class="ks-step-li"><span>已完成</span></div>
+</div>
+ */
+.ks-step { height: 6px; border-radius: 3px; background: #c6d2e0; position: relative; width: 100%; margin-bottom: 50px; margin-top: 5px;}
+.ks-step-value { height: 6px; border-radius: 3px; background: #298df8; width: 0; position: relative;}
+.ks-step-value span { position: absolute; top: 20px; left: 100%; transform:translateX(-50%); white-space:nowrap;}
+.ks-step-value:after { content: ''; width:12px; height:12px; background: #298df8; border-radius: 50%; position: absolute; right:-8px; bottom: calc(100% - 12px); border:rgba(255,255,255,0.8) 3px solid; z-index: 5}
+
+.ks-step-li {border-radius: 3px; float: left; width:100%; height: 6px; background: #c6d2e0; position: relative; z-index: 2;}
+.ks-step-li:after { content: ''; width:12px; height:12px; background: #c6d2e0; border-radius: 50%; position: absolute; right:0; bottom: calc(100% - 12px); border:rgba(255,255,255,0.8) 3px solid; z-index: 5}
+.ks-step-li span { position: absolute; top: 20px; display: block; white-space:nowrap; left: 100%; transform:translateX(-50%); margin-left: -9px}
+.ks-step-li.a {color: #298df8;background: #298df8; z-index: 10}
+.ks-step-li.a:after {background: #298df8;}
+
+.ks-step[data-num='3'] .ks-step-li {  width:calc(50% - 0px)}
+.ks-step[data-num='4'] .ks-step-li {  width:calc(33.333% - 0px);}
+.ks-step[data-num='5'] .ks-step-li {  width:calc(25% - 0px);}
+.ks-step[data-num='6'] .ks-step-li {  width:calc(20% - 0px);}
+.ks-step[data-num='7'] .ks-step-li {  width:calc(16.666% - 0px);}
+.ks-step[data-num='8'] .ks-step-li {  width:calc(14.28% - 0px);}
+.ks-step[data-num='9'] .ks-step-li {  width:calc(12.5% - 0px);}
+.ks-step .ks-step-li:first-child {width:0;}
+.ks-step .ks-step-li:first-child:after {left:-4px}
+.ks-step .ks-step-li:first-child span { left: -4px; transform:translateX(0);}
+
+
+
+
+/*登录页*/
+.login-bg { background:#0b1c2f; position: fixed; left: 0; top: 0; right: 0; bottom: 0; width: 100%; height: 100%;}
+
+form > ks-card, body > ks-card {margin:20px;}

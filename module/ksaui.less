@@ -335,8 +335,7 @@ ks-navaction {
 
 .ks-layer {
   position: fixed;
-  background: rgba(255, 255, 255, .1);
-  backdrop-filter: blur(15px);
+  background: #fff;
   box-shadow: rgba(0, 0, 0, .28) 0 0 10px;
   border-radius: 3px;
   top: 50%;
@@ -413,6 +412,7 @@ ks-navaction {
   }
 }
 
+
 //layer遮罩层
 .ks-layer-cover {
   background: rgba(0, 0, 0, 0.8);
@@ -423,7 +423,7 @@ ks-navaction {
   top: 0;
   bottom: 0;
   z-index: 1;
-  user-select: none
+  user-select: none;
 }
 
 //iframe框架
@@ -467,7 +467,7 @@ ks-navaction {
 //自由定位的layer样式调整 一般用于下拉选择
 .ks-layer[pos="0"] {
   border: var(--input-border) 1px solid;
-  background: rgba(255, 255, 255, .3);
+  background: #fff;
   box-shadow: 0 5px 5px 0 rgba(154, 161, 171, .17);
   position: absolute;
   min-width: 120px;
@@ -561,7 +561,7 @@ ks-navaction {
 //确认框
 .ks-Dialog_confirm {
   .ks-layer-title {
-    padding: 0.2rem 0 0 0.4rem;
+    padding: 0.2rem 0 0 0.25rem;
     font-size: 16px;
     border: 0
   }
@@ -572,11 +572,12 @@ ks-navaction {
     color: var(--highcolor);
     font-size: 0.24rem;
     vertical-align: middle;
+    margin-right: 0.05rem;
   }
 
   .ks-layer-content {
     font-size: 16px;
-    padding: 0.1rem 0.4rem 0.4rem 0.7rem;
+    padding: 0.1rem 0.4rem 0.4rem 0.55rem;
     min-width: 3.4rem
   }
 
@@ -1078,7 +1079,7 @@ ks-page {
     margin-right: 0;
   }
 
-  //快速跳转
+  //表单组
   ks-input-group {
     font-size: 1em;
     width: auto;
@@ -2097,7 +2098,7 @@ ks-form {
     padding-right: 12px;
   }
 
-  ks-form-extra, ks-form-content {
+  ks-form-content {
     width: 100%;
     flex: auto;
   }
@@ -2106,7 +2107,9 @@ ks-form {
     min-height: 24px;
     line-height: 24px;
     font-size: 14px;
-    color: rgba(0, 0, 0, .4)
+    color: rgba(0, 0, 0, .4);
+    width: 100%;
+    display: block;
   }
 
 
@@ -2199,10 +2202,12 @@ ks-form {
     }
   }
 
+
   &[inline] {
     display: inline-block;
 
     > * {
+      width: auto;
       margin-bottom: 0;
       display: inline-block;
       vertical-align: top;
@@ -2575,7 +2580,7 @@ ks-btn {
   vertical-align: middle;
   user-select: none;
   height: @inputHeight;
-  line-height: @inputHeight;
+  line-height: (@inputHeight - 2);
   position: relative;
   white-space: nowrap;
   z-index: 2;
@@ -2696,7 +2701,7 @@ ks-btn {
 
   &[size='small'] {
     height: (@inputHeight - 8px);
-    line-height: (@inputHeight - 8px);
+    line-height: (@inputHeight - 10px);
     font-size: 12px;
     padding: 0 10px;
 
@@ -2708,7 +2713,7 @@ ks-btn {
 
   &[size='mini'] {
     height: (@inputHeight - 16px);
-    line-height: (@inputHeight - 16px);
+    line-height: (@inputHeight - 18px);
     font-size: 12px;
     padding: 0 5px;
 
@@ -3842,9 +3847,8 @@ ks-pic {
 
 //============== 输入框组 ==============
 ks-input-group {
-  display: flex;
+  display: inline-flex;
   align-items: stretch; /* 垂直居中 */
-  justify-content: center; /* 水平居中，如果需要的话 */
   width: 100%;
   border-collapse: separate;
   vertical-align: middle;

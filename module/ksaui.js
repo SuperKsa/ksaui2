@@ -1,5 +1,5 @@
 /*
- * KSAUI 前端UI组件库 V1.0
+ * KSAUI 前端UI组件库 V2.0
  *
  * 目前版本还处于开发中，请勿保存并用于生产环境！
  *  * ---------------------------------------
@@ -8,22 +8,24 @@
  * @Author: cr180(cr180.com & ksaOS.com)
  * @Date: 2017-06-12 01:24:09
  * @LastEditors: CR180
- * @LastEditTime: 2020-08-23 17:25:34
+ * @LastEditTime: 2023-08-03 19:48:34
  * @Description: file content
  */
 
-$.ZINDEX = 999;
-$.WINID = 1; //弹窗层初始ID
-$.W = 0; //当前窗口宽度
-$.H = 0; //当前窗口高度
-$.mouseX = 0;
-$.mouseY = 0;
-$.device = 'PC'; //设备类型 PC MOBILE
-$.deviceView = 0; //横屏竖屏 0=横屏 1=竖屏
-$.ksauiRenderTree = {};
+
 
 
 (function ($) {
+    $.ZINDEX = 999;
+    $.WINID = 1; //弹窗层初始ID
+    $.W = 0; //当前窗口宽度
+    $.H = 0; //当前窗口高度
+    $.mouseX = 0;
+    $.mouseY = 0;
+    $.device = 'PC'; //设备类型 PC MOBILE
+    $.deviceView = 0; //横屏竖屏 0=横屏 1=竖屏
+    $.ksauiRenderTree = {};
+
     var UserAgent = navigator.userAgent;
     //低版本IE给html增加 .ks-ie9
     $.IE = _getIEversion();
@@ -2774,7 +2776,7 @@ $.ksauiRenderTree = {};
                     }
                     //数字 普通输入框 密码框
                     if ($.inArray(value.type, ['number', 'text', 'password', 'tel', 'color'])) {
-                        value.type = !value.unit ? 'ks-'+value.type : value.type;
+                        value.type = 'ks-'+value.type;
                         delete value.label;
                         if(value.unit){
                             H += '<ks-input-group>';
@@ -4304,15 +4306,11 @@ $.ksauiRenderTree = {};
         $.render('table.ks-table[fixed-height]', function (ele) {
             ele = $(ele);
             var fixedHeight = parseInt(ele.attr('fixed-height')) || 0;
-            if (!fixedHeight) {
-                return;
-            }
-            ele.attr('fixed-height', '');
             var thead = ele.children('thead');
             var allWidth = ele.width(true); //总宽度值
-            var dom = $('<div class="ks-table-fixed-header"><div class="ks-table-header"></div><div class="ks-table-body" style="overflow-y: scroll; max-height:' + fixedHeight + 'px"></div></div>');
+            var dom = $('<div class="ks-table-fixed-header ks-flex" vertical style="height: 100%;"><div class="ks-table-header"></div><div class="ks-table-body" style="overflow-y: scroll; flex: 1; height: 100%;"></div></div>');
 
-            var rowCols = ele.children().eq(0).children().children();
+            var rowCols = ele.find('tr').eq(0).children();
             var rowColsNum = rowCols.length - 1;
 
             var colgroup = '<colgroup>';
@@ -4320,8 +4318,7 @@ $.ksauiRenderTree = {};
                 if (index === rowColsNum) {
                     return;
                 }
-                var w = $(el).width(true) / allWidth * 100;
-                colgroup += '<col style="width:' + w + '%; min-width: ' + w + '%">';
+                colgroup += '<col>';
             });
             colgroup += '</colgroup>';
             ele.after(dom);
@@ -4333,7 +4330,24 @@ $.ksauiRenderTree = {};
             scrollTd.style.width = scrollWidth + 'px';
             scrollTd.className = 'ks-td-scroll';
             dom.find('.ks-table-header > table > thead > tr').append(scrollTd);
-
+            if(fixedHeight > 0){
+                dom.find('.ks-table-body').css('max-height', fixedHeight);
+            }else{
+                function _runFunc(){
+                    let colObj = dom.find('colgroup > col');
+                    allWidth = ele.width(true); //总宽度值
+                    ele.find('tr').eq(0).children().each(function (index, el) {
+                        if (index === rowColsNum) {
+                            return;
+                        }
+                        let tdW = $(el).width(true);
+                        var w = tdW / allWidth * 100;
+                        colObj.eq(index).css('width', `${w}%`)
+                    });
+                }
+                $.timer(_runFunc, 200, 10, true);
+                $(window).resize(_runFunc);
+            }
         });
 
         //自定义组件 表单结构
@@ -4351,7 +4365,7 @@ $.ksauiRenderTree = {};
                 //!domInline && ele.addClass('ks-clear');
                 ele.wrapInner('<ks-form-content></ks-form-content>');
                 attrs.label && ele.prepend('<ks-form-label ' + ($.isset(attrs.required) ? 'required' : '') + '>' + attrs.label + '</ks-form-label>');
-                attrs.extra && ele.append('<ks-form-extra>' + attrs.extra + '</ks-form-extra>');
+                attrs.extra && ele.find('ks-form-content').append('<ks-form-extra>' + attrs.extra + '</ks-form-extra>');
                 ele.attr({label : '', extra : '', required : ''});
 
                 if (labelWidth) {
