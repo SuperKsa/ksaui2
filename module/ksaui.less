@@ -236,7 +236,6 @@ ks-content {
 // 货币
 ks-price {
   font-size: 1em;
-  font-weight: bold;
   display: inline-block;
 
   small {
@@ -2189,7 +2188,7 @@ ks-form {
     }
 
     ks-btn {
-      line-height: (@inputHeight - 8px);
+      line-height: (@inputHeight - 10px);
       padding: 0 10px;
     }
 
@@ -2210,7 +2209,7 @@ ks-form {
       width: auto;
       margin-bottom: 0;
       display: inline-block;
-      vertical-align: top;
+      vertical-align: middle;
     }
 
     ks-form-label, ks-form-content, ks-form-extra {
@@ -2224,8 +2223,9 @@ ks-form {
 
   //垂直结构
   &[top] {
+    ks-form-item { display: block;}
     ks-form-label, ks-form-content, ks-form-extra {
-      float: none;
+      display: block;
       width: 100%;
       text-align: left;
     }
@@ -2703,7 +2703,7 @@ ks-btn {
     height: (@inputHeight - 8px);
     line-height: (@inputHeight - 10px);
     font-size: 12px;
-    padding: 0 10px;
+    padding: 0 6px;
 
     &[icon='loading']::before {
       width: 10px;
@@ -2715,7 +2715,7 @@ ks-btn {
     height: (@inputHeight - 16px);
     line-height: (@inputHeight - 18px);
     font-size: 12px;
-    padding: 0 5px;
+    padding: 0 3px;
 
     &[icon='loading']::before {
       width: 8px;
@@ -3736,7 +3736,6 @@ ks-pic {
   background: var(--input-background);
   border: var(--input-border) 1px dashed;
   position: relative;
-  margin: 0 10px 10px 0;
   /* 上传时的进度展示 */
 
   &[uploading] {

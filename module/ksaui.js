@@ -1083,7 +1083,7 @@
     /**
      * mini提示框
      * @param {html} msg 提示内容
-     * @param {success/error/info/warning} tps 状态 info=普通 success=成功 error=错误 warning=系统警告
+     * @param {success/error/info/warning/loading} tps 状态 info=普通 success=成功 error=错误 warning=系统警告 loading=加载中
      * @param {func} callFun 窗口关闭后回调函数
      * @param {number} outTime 关闭时间(秒) 0=一直显示
      * @returns {k.fn.init}
@@ -1537,7 +1537,6 @@
         if(confirmTxt ===''){
             confirmTxt = '确认要提交该信息吗？';
         }
-        var loadingLayerID;
 
         var _submit = function(){
                 var btn = obj.find('button[type=submit], input[type=submit], ks-btn[submit]');
@@ -1547,9 +1546,9 @@
                 if (obj.attr('id')) {
                     formData.append('FORMID', obj.attr('id'));
                 }
-                loadingLayerID = $.toast('请稍后','','','',0).id;
+                loadingLayerObj = $.toast('loading');
                 $.API($.urlAdd(obj.attr('action'), 'formsubmit=true'), formData, function (dt, sdt) {
-                    $.layerHide(loadingLayerID);
+                    loadingLayerObj.close();
                     btn.removeClass('btn-load').disabled(false).html(btnTxt);
                     //如果回调函数返回false则直接跳出
                     if (callFun && callFun.apply(obj[0], arguments) === false) {
@@ -1558,17 +1557,17 @@
                     //如果当前是一个iframeLayer 则关闭当前layer
                     if($.isObject(dt) && sdt.success && $('body').attr('parentlayerid')){
                         $.layerHideF();
-                        window.parent.$.layerHide(loadingLayerID);
+                        loadingLayerObj.close();
                     }
                 }, function () {
-                    $.layerHide(loadingLayerID);
+                    loadingLayerObj.close();
                     btn.removeClass('btn-load').disabled(false).html(btnTxt);
                 }, 'json', 1);
 
                 //30秒后解除提交按钮限制
                 setTimeout(function () {
                     btn.removeClass('btn-load').disabled(false).html(btnTxt);
-                    $.layerHide(loadingLayerID);
+                    loadingLayerObj.close();
                 }, 30 * 1000);
         }
         if(confirmTxt){
@@ -3593,6 +3592,25 @@
     }
 
     (function () {
+        //自定义组件 表单结构
+        $.render('ks-form', function (dom) {
+            dom = $(dom);
+            var labelWidth = dom.attr('label-width');
+            dom.find('ks-form-item').map(function (ele) {
+                ele = $(ele);
+                var attrs = ele.attr();
+                ele.wrapInner('<ks-form-content></ks-form-content>');
+                attrs.label && ele.prepend('<ks-form-label ' + ($.isset(attrs.required) ? 'required' : '') + '>' + attrs.label + '</ks-form-label>');
+                attrs.extra && ele.find('ks-form-content').append('<ks-form-extra>' + attrs.extra + '</ks-form-extra>');
+                ele.attr({label : '', extra : '', required : ''});
+                if (labelWidth) {
+                    labelWidth = $.isNumber(labelWidth) ? labelWidth + 'px' : labelWidth;
+                    ele.find('ks-form-label').width(labelWidth);
+                    ele.find('ks-form-content , ks-form-extra').width('calc(100% - ' + labelWidth + ')');
+                }
+            });
+        });
+
         $.render('select[type="ks-select"]', function (ele, isAttrUp, update) {
             let t = $(ele), at = t.attr();
             if (t[0].tagName != 'SELECT') {
@@ -3938,7 +3956,7 @@
                                         h += '</div>';
                                         h = $(h);
                                         h.find('p').click(function(){
-                                            t.val($(this).text());
+                                            t.val($(this).attr('value'));
                                             $.layerHide(intxtLayerID);
                                         });
                                         layer.find('.ks-layer-content').html(h);
@@ -4215,7 +4233,7 @@
             t = $(t);
             let attrs = t.attr();
             let isFiles = attrs.type.substring(3) == 'files';
-            t.attr('type', 'file').css('display','none');
+            t.attr('type', 'file').removeAttr('name').css('display','none');
             isFiles && t.attr('multiple', true);
             let exts = '';
             let tit = attrs.text ? attrs.text : '选择文件';
@@ -4235,9 +4253,18 @@
             if(!attrs.style){
                 attrs.style = {};
             }
+            function _inset(picList){
+                var h = '';
+                var label = t.parent();
+                $.loop(picList,function(value){
+                    h += '<input type="hidden" name="'+attrs.name+'" value="'+value.aid+'">';
+                });
+                label.find('._set_input').html(h);
+                t[0].value = ''; //清空文件框的值
+            }
             attrs.style['--progress'] = '0';
             t.wrap($.tag('label',{class:'ks-file', style : attrs.style}));
-            t.after('<span class="ks-input-title" icon="upload-cloud-2">'+tit+'</span>');
+            t.after('<span class="ks-input-title" icon="upload-cloud-2">'+tit+'</span><span class="_set_input"></span>');
             let parentTag = t.parents('.ks-file');
             t.change(function(){
                 let name = this.files[0].name;
@@ -4248,7 +4275,7 @@
                 if(this.files.length > 1){
                     name += ' 等'+this.files.length+'个';
                 }
-                t.next('span').text(name);
+                t.next('.ks-input-title').text(name);
 
                 if(attrs.api) {
                     parentTag.attr('uploading', true);
@@ -4256,8 +4283,8 @@
                     $.upload('upload', t[0], attrs.api, function (dt) {
                         parentTag.removeAttr('uploading');
                         parentTag.removeAttr('progress');
-                        t.val('');
                         parentTag.css('--progress', '0%');
+                        dt && $.isObject(dt) && dt.List && _inset(dt.List);
                     }, function(progress){
                         parentTag.css('--progress', progress+'%');
                         parentTag.attr('progress', progress);
@@ -4350,31 +4377,7 @@
             }
         });
 
-        //自定义组件 表单结构
-        $.render('ks-form', function (dom) {
-            dom = $(dom);
-            var domInline = $.isset(dom.attr('inline')),
-                labelWidth = dom.attr('label-width');
-            dom.find('ks-form-item').map(function (ele) {
-                if (ele._ksa_render_ks_form_item) {
-                    return;
-                }
-                ele._ksa_render_ks_form_item = 1;
-                ele = $(ele);
-                var attrs = ele.attr();
-                //!domInline && ele.addClass('ks-clear');
-                ele.wrapInner('<ks-form-content></ks-form-content>');
-                attrs.label && ele.prepend('<ks-form-label ' + ($.isset(attrs.required) ? 'required' : '') + '>' + attrs.label + '</ks-form-label>');
-                attrs.extra && ele.find('ks-form-content').append('<ks-form-extra>' + attrs.extra + '</ks-form-extra>');
-                ele.attr({label : '', extra : '', required : ''});
 
-                if (labelWidth) {
-                    labelWidth = $.isNumber(labelWidth) ? labelWidth + 'px' : labelWidth;
-                    ele.find('ks-form-label').width(labelWidth);
-                    ele.find('ks-form-content , ks-form-extra').width('calc(100% - ' + labelWidth + ')');
-                }
-            });
-        });
 
         //自定义组件 提交按钮
         $.render('ks-btn[submit]', function (dom) {
@@ -4457,6 +4460,7 @@
                 });
             });
         });
+
         //自定义组件 价格标签
         $.render('ks-price', function (ele) {
             ele = $(ele);
@@ -4479,15 +4483,12 @@
                 }
                 ele.append(txt);
             }
-            var val = ele.text();
+            var val = ele.attr('value');
             var unit = ele.attr('unit');
             if(unit){
                 val = unit+val;
             }
             _inup(val);
-            ele.DOMchange('attr.value', function(str){
-                _inup(str);
-            });
         }, 'attr.value attr.unit');
 
         //自定义组件 卡片盒子
