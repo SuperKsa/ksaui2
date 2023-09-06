@@ -1971,8 +1971,8 @@ ks-empty:before {
   z-index: 1;
 
   th {
-    font-weight: bold;
-    color: rgba(0, 0, 0, .75);
+    font-weight: 400;
+    color:#999;
   }
 
   th, td {
@@ -1980,6 +1980,17 @@ ks-empty:before {
     min-width: 51px;
     overflow-wrap: break-word;
     border-bottom: var(--bordercolor) 1px solid
+  }
+  &[size="small"]{
+    th, td{
+      padding: 8px;
+    }
+  }
+
+  &[size="mini"]{
+    th, td{
+      padding: 4px;
+    }
   }
 
   //模式 左标题右内容
@@ -1997,8 +2008,6 @@ ks-empty:before {
   }
 
   //thead增加背景色
-  > thead,
-  > tbody:first-child > tr:first-child,
   &[data-style*='hover'] tr:hover {
     background: var(--background-gray);
     color: var(--text-color-dark);
@@ -2819,8 +2828,8 @@ ks-tag {
   font-size: 14px;
   border-radius: 3px;
   vertical-align: middle;
-  background: var(--background-light);
-  color: var(--highcolor);
+  background: #e6effb;
+  color: var(--defcolor);
   position: relative;
 
   &[close] {

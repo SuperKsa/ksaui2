@@ -1,0 +1,33 @@
+:root{
+    --card-box-shadow : none;
+}
+.demo-box-item ks-card-content {padding: 10px;}
+
+body {background-image: linear-gradient(to right bottom, #f0f8ff 1%, #f0ecff)}
+.demo-logo {width: 100%; height: 80px; line-height: 80px; font-size: 30px; background: rgba(0, 0, 0, .6); color: #fff; text-align: center;}
+
+#demo-body { max-width: 1200px; margin-left: 200px;}
+
+.demo-sidebar { background: #0a5491; width: 160px; height: 100%; overflow: hidden; color: #7db1db; position: fixed; left: 0; top: 0;}
+
+ks-collapse { padding: 0 10px;}
+
+.demo-sidebar ks-collapse-block {}
+
+.demo-sidebar ks-collapse-block > * {height: 30px; line-height: 30px; padding: 0 10px; cursor: pointer; user-select: none}
+
+.demo-sidebar ks-collapse-block > *[active] { color: #fff}
+
+.demo-sidebar ks-collapse-block > *:hover { background: rgba(255, 255, 255, .1)}
+
+.toolsbar { position: fixed; right: 0; top: 0; background: #fff; font-size: 12px; box-shadow: rgba(0,0,0, .5) 0 0 10px; z-index: 99}
+.toolsbar td {padding: 5px;}
+.toolsbar textarea { width: 100%; height: 200px; color: #0000ff; border: none; background: #f2f2f2; padding: 3px;}
+
+
+.doc-examplebox { border: #efefef 1px solid; border-radius: 4px;}
+.doc-preview { padding: 1em}
+.doc-examplebox .doc-code { border-top: #efefef 1px solid;}
+
+.doc-code {max-height: 300px; overflow: hidden auto; background: #fafafa;}
+.doc-code .hljs { background: none}

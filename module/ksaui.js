@@ -24,7 +24,7 @@
     $.mouseY = 0;
     $.device = 'PC'; //设备类型 PC MOBILE
     $.deviceView = 0; //横屏竖屏 0=横屏 1=竖屏
-    $.ksauiRenderTree = {};
+
 
     var UserAgent = navigator.userAgent;
     //低版本IE给html增加 .ks-ie9
@@ -63,7 +63,7 @@
         $.H = window.innerHeight;
     });
 
-
+    $.ksauiRenderTree = {};
     /**
      * 内部DOM渲染函数
      * @private
@@ -84,9 +84,7 @@
                     }else if(val == 'html' && update.type === 'childList'){
                         isCall =val;
                     }
-                    if (isCall) {
-                        option.callback && option.callback.call(ele, ele, true, val);
-                    }
+                    isCall && option.callback && option.callback.call(ele, ele, true, val);
                 });
             }
             if (!ele._KSAUIRENDER_[selector]) {
@@ -106,55 +104,41 @@
                 ele.find(selector).map(function (el) {
                     _documentRenderFun(option, el, selector, update);
                 });
-                var thisEl = ele.filter(selector);
-                thisEl.length && _documentRenderFun(option, thisEl[0], selector, update);
+                ele.filter(selector).each((_, el) => {
+                    _documentRenderFun(option, el, selector, update);
+                });
             });
         }
 
         var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-        //监听节点变动 HTML5
-        if (MutationObserver) {
-            var observer = new MutationObserver(function (Mut) {
-                $.loop(Mut, function (val) {
-                    if (val.type === 'childList' && (val.addedNodes.length || val.removedNodes.length)) {
-                        _documentRender(val.target, val);
-                        $.loop(val.addedNodes, function (ele) {
-                            if (ele.nodeType === 1 && $.isIndom(ele)) {
-                                _documentRender(ele, val);
-                            }
-                        });
-                        $.loop(val.removedNodes, function (ele) {
-                            if (ele.nodeType === 1 && $.isIndom(ele)) {
-                                _documentRender(ele, val);
-                            }
-                        });
-                    }else if(val.type ==='attributes'){
-                        _documentRender(val.target, val);
-                    }
-                });
-            });
-            observer.observe(document, {
-                characterDataOldValue : true, //在文本在受监视节点上发生更改时记录节点文本的先前值
-                attributeOldValue : true, //记录属性旧值
-                attributes : true , //检测属性变动
-                childList : true , //检测子节点变动
-                subtree : true , //整个子孙节点变动
-                //attributeFilter : ['style', 'clientWidth', 'clientHeight', 'offsetWidth', 'offsetHeight']
-            });
-            //监听节点变动 低版本浏览器
-        } else {
 
-            $(document).on('DOMContentLoaded DOMNodeInserted', function (Mut) {
-                if (Mut.type === 'DOMNodeInserted') {
-                    _documentRender(Mut.target);
-                } else {
-                    $.loop(document.body.children, function (ele) {
-                        _documentRender(ele);
+        var observer = new MutationObserver(function (Mut) {
+            $.loop(Mut, function (val) {
+                if (val.type === 'childList' && (val.addedNodes.length || val.removedNodes.length)) {
+                    _documentRender(val.target, val);
+                    $.loop(val.addedNodes, function (ele) {
+                        if (ele.nodeType === 1 && $.isIndom(ele)) {
+                            _documentRender(ele, val);
+                        }
                     });
+                    $.loop(val.removedNodes, function (ele) {
+                        if (ele.nodeType === 1 && $.isIndom(ele)) {
+                            _documentRender(ele, val);
+                        }
+                    });
+                }else if(val.type ==='attributes'){
+                    _documentRender(val.target, val);
                 }
             });
-        }
-    };
+        });
+        observer.observe(document, {
+            characterDataOldValue : true, //在文本在受监视节点上发生更改时记录节点文本的先前值
+            attributeOldValue : true, //记录属性旧值
+            attributes : true , //检测属性变动
+            childList : true , //检测子节点变动
+            subtree : true , //整个子孙节点变动
+        });
+    }
 
     $.render = function (selector, func, monitor) {
         var newMonitor = [];
@@ -1771,7 +1755,7 @@
     };
 
 
-//将JSON数据转换为HTML菜单列表
+    //将JSON数据转换为HTML菜单列表
     function select_json_html(dt, defvalue, multiple) {
         var h = '';
         var dtArr = $.isArray(dt);
@@ -2471,52 +2455,6 @@
             }
         });
     };
-
-    //title提示文字处理
-    $.showTip = function (obj, txt, click) {
-        obj = $(obj);
-        txt = txt ? txt : (obj.attr('title') || '');
-        if (!txt) {
-            return;
-        }
-        $.ZINDEX++;
-        $('body').append('<div class="ks-ftip" style="z-index:' + this.ZINDEX + '">' + txt + '<span class="ks-ftip-x"></span></div>');
-        var tip = $('.ks-ftip');
-        tip.show();
-        var ht = tip.height(true);
-
-        let offset = obj.offset();
-        var left = offset.left;
-
-
-        let top = offset.top - ht;
-        if(top < ht){
-            top = offset.top + obj.height(true) + 5;
-            tip.attr('pos', 'bottom');
-        }else{
-            top -= 5;
-        }
-        if (left + tip.width(true) > window.innerWidth) {
-            left = window.innerWidth - tip.width(true);
-        }
-        tip.find('.ks-ftip-x').css({left: Math.max(offset.left - left, 3)});
-        tip.css({left : left, top : top});
-        var s;
-        obj.hover(function () {
-            s && clearTimeout(s);
-        }, function () {
-            s = setTimeout(function () {
-                tip.remove();
-            }, 10);
-        });
-        tip.hover(function () {
-            s && clearTimeout(s);
-        }, function () {
-            s = setTimeout(function () {
-                tip.remove();
-            }, 10);
-        });
-    };
     /**
      * 幻灯轮播
      * @param options
@@ -2728,6 +2666,51 @@
             });
         });
         return this;
+    };
+    //title提示文字处理
+    $.showTip = function (obj, txt, click) {
+        obj = $(obj);
+        txt = txt ? txt : (obj.attr('title') || '');
+        if (!txt) {
+            return;
+        }
+        $.ZINDEX++;
+        $('body').append('<div class="ks-ftip" style="z-index:' + this.ZINDEX + '">' + txt + '<span class="ks-ftip-x"></span></div>');
+        var tip = $('.ks-ftip');
+        tip.show();
+        var ht = tip.height(true);
+
+        let offset = obj.offset();
+        var left = offset.left;
+
+
+        let top = offset.top - ht;
+        if(top < ht){
+            top = offset.top + obj.height(true) + 5;
+            tip.attr('pos', 'bottom');
+        }else{
+            top -= 5;
+        }
+        if (left + tip.width(true) > window.innerWidth) {
+            left = window.innerWidth - tip.width(true);
+        }
+        tip.find('.ks-ftip-x').css({left: Math.max(offset.left - left, 3)});
+        tip.css({left : left, top : top});
+        var s;
+        obj.hover(function () {
+            s && clearTimeout(s);
+        }, function () {
+            s = setTimeout(function () {
+                tip.remove();
+            }, 10);
+        });
+        tip.hover(function () {
+            s && clearTimeout(s);
+        }, function () {
+            s = setTimeout(function () {
+                tip.remove();
+            }, 10);
+        });
     };
 
     /**
@@ -4242,7 +4225,7 @@
                     return '.'+v;
                 });
                 if(exts){
-                    attrExt = $.implode(', ', exts);
+                    let attrExt = $.implode(', ', exts);
                     exts = '('+$.implode(' ', exts)+')';
                     t.attr('accept', attrExt);
                     tit += ' '+exts;
@@ -4313,7 +4296,8 @@
 
         //星星评分显示
         $.render('ks-star', function(ele){
-            ele = $(ele), attr = ele.attr(), value = parseInt(attr.value || 0);
+            ele = $(ele);
+            let attr = ele.attr(), value = parseInt(attr.value || 0);
             var h = '';
             $.loop(parseInt(attr.max || 5), function(i){
                 h += '<i icon="star-fill" '+(value == i ? 'active' : '')+'></i>';
@@ -4930,4 +4914,5 @@
 
     //开始渲染流程
     _KSArenderStart();
+
 })(KSA);
