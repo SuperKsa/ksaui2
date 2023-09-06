@@ -1567,7 +1567,6 @@
                 //30秒后解除提交按钮限制
                 setTimeout(function () {
                     btn.removeClass('btn-load').disabled(false).html(btnTxt);
-                    loadingLayerObj.close();
                 }, 30 * 1000);
         }
         if(confirmTxt){
