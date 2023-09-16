@@ -158,7 +158,7 @@ select,
 textarea,
 pre,
 code {
-  font-family: "阿里妈妈方圆体 VF Regular", "Microsoft YaHei", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: "Microsoft YaHei", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: inherit;
   font-style: inherit;
   outline: none;
@@ -3530,14 +3530,14 @@ input[type='number']::-webkit-inner-spin-button {
   width: 80px;
   flex: none;
 }
-html[device=pc] .ks-input input:not(:disabled):focus,
-html[device=pc] .ks-input textarea:not(:disabled):focus,
-html[device=pc] input.ks-input:not(:disabled):focus,
-html[device=pc] .ks-textarea textarea:not(:disabled):focus,
-html[device=pc] ks-input-group > input:focus,
-html[device=pc] ks-input-group > textarea:focus,
-html[device=pc] .ks-select[active],
-html[device=pc] ks-area:not([disabled])[active] {
+.ks-input input:not(:disabled):focus,
+.ks-input textarea:not(:disabled):focus,
+input.ks-input:not(:disabled):focus,
+.ks-textarea textarea:not(:disabled):focus,
+ks-input-group > input:focus,
+ks-input-group > textarea:focus,
+.ks-select[active],
+ks-area:not([disabled])[active] {
   border-color: var(--highcolor);
   box-shadow: 0 0 0 2px rgba(45, 140, 240, 0.2);
   position: relative;

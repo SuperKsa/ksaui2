@@ -1094,6 +1094,7 @@
         if(msg == 'loading' && !tps){
             tps == msg;
             msg = '请稍后...';
+            outTime = 0;
         }
         if (!tps) {
             tps = 'info';
@@ -1484,7 +1485,7 @@
 
 
                 } else {
-                    $.toast('error', 'ajax远端系统错误');
+                    $.toast('ajax远端系统错误', 'error');
                 }
             },
             error : function (s) {
@@ -1563,11 +1564,12 @@
                     loadingLayerObj.close();
                     btn.removeClass('btn-load').disabled(false).html(btnTxt);
                 }, 'json', 1);
-
+                /*
                 //30秒后解除提交按钮限制
                 setTimeout(function () {
                     btn.removeClass('btn-load').disabled(false).html(btnTxt);
                 }, 30 * 1000);
+                */
         }
         if(confirmTxt){
             $.Dialog('confirm', '操作提示', confirmTxt, _submit);
@@ -2119,7 +2121,7 @@
                         !isHi && sput();//写值
                         //如果没有时分秒操作栏 则直接关闭当前窗口
                         if (!dom.find('.' + cl.d).length) {
-                            $.layerHide(layer.layerID);
+                            layer.layer.close();
                         }
                         return false;
                     });
@@ -2161,7 +2163,7 @@
                 //确认按钮
                 dom.find('ks-btn').click(function () {
                     sput();//写值
-                    $.layerHide(layer.layerID);
+                    layer.layer.close();
                     return false;
                 });
 
@@ -2171,15 +2173,21 @@
                     target.removeAttr('ks-date-show');
                 });
                 input && input.blur(function () {
-                    !$(this).attr('ks-date-show') && $.layerHide(layer.layerID);
+                    !$(this).attr('ks-date-show') && $.timer(layer.layer.close, 50, 1);
                 });
 
                 //监听点击事件 自动关闭
                 $(document).on('click.KSAUI-showdate', function (e) {
-                    if (!$.inArray(e.target, [target[0], layer[0]])) {
+                    let close = false;
+                    $.loop(e.path, function (el) {
+                        close = !$.inArray(el, [target[0], layer[0]]);
+                        if(close){
+                            return false;
+                        }
+                    });
+                    if (close) {
                         $(document).off('click.KSAUI-showdate');
-                        $.layerHide(layer.layerID);
-
+                        layer && layer.layer.close();
                     }
                 });
             },
@@ -3741,7 +3749,7 @@
 
 
             var name = t.attr('name');
-            var selector = $(t.attr('selector') || t.parent()[0].form || t.parent().parent());
+            var selector = $(t.attr('selector') || t.parents('form')[0] || t.parent().parent());
             var tParent = t.parent();
             let inputs = 'input[type="checkbox"]:not([ischeckall]):not([disabled])';
             if(name){
@@ -4232,7 +4240,7 @@
             t = $(t);
             let attrs = t.attr();
             let isFiles = attrs.type.substring(3) == 'files';
-            t.attr('type', 'file').removeAttr('name').css('display','none');
+            t.attr('type', 'file').css('display','none');
             isFiles && t.attr('multiple', true);
             let exts = '';
             let tit = attrs.text ? attrs.text : '选择文件';
@@ -4253,6 +4261,7 @@
                 attrs.style = {};
             }
             function _inset(picList){
+
                 var h = '';
                 var label = t.parent();
                 $.loop(picList,function(value){
@@ -4260,6 +4269,9 @@
                 });
                 label.find('._set_input').html(h);
                 t[0].value = ''; //清空文件框的值
+            }
+            if(attrs.api){
+                t.removeAttr('name');
             }
             attrs.style['--progress'] = '0';
             t.wrap($.tag('label',{class:'ks-file', style : attrs.style}));
