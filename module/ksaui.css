@@ -1677,8 +1677,8 @@ ks-empty:before {
   z-index: 1;
 }
 .ks-table th {
-  font-weight: bold;
-  color: rgba(0, 0, 0, 0.75);
+  font-weight: 400;
+  color: #999;
 }
 .ks-table th,
 .ks-table td {
@@ -1686,6 +1686,14 @@ ks-empty:before {
   min-width: 51px;
   overflow-wrap: break-word;
   border-bottom: var(--bordercolor) 1px solid;
+}
+.ks-table[size="small"] th,
+.ks-table[size="small"] td {
+  padding: 8px;
+}
+.ks-table[size="mini"] th,
+.ks-table[size="mini"] td {
+  padding: 4px;
 }
 .ks-table tr > th:only-of-type {
   width: 100px;
@@ -1696,8 +1704,6 @@ ks-empty:before {
 .ks-table[hover] tbody tr:hover {
   background: var(--background-gray);
 }
-.ks-table > thead,
-.ks-table > tbody:first-child > tr:first-child,
 .ks-table[data-style*='hover'] tr:hover {
   background: var(--background-gray);
   color: var(--text-color-dark);
@@ -2591,8 +2597,8 @@ ks-tag {
   font-size: 14px;
   border-radius: 3px;
   vertical-align: middle;
-  background: var(--background-light);
-  color: var(--highcolor);
+  background: #e6effb;
+  color: var(--defcolor);
   position: relative;
 }
 ks-tag[close] {

@@ -2780,6 +2780,10 @@ function debugTime(key) {
         Vue.delete.apply(Vue, arguments);
     }
     $.tpl = function(Config){
+        if(!$.__VUEignoredElements) {
+            $.__VUEignoredElements = true;
+            Vue.config.ignoredElements = ['ks-collapse', 'ks-collapse-title', 'ks-card', 'ks-tag', 'ks-card', 'ks-card-title', 'ks-input-group', 'ks-btn', 'ks-tag', 'ks-btn', 'ks-tag', 'ks-btn', 'ks-input-group', 'ks-btn', 'ks-btn', 'ks-card', 'ks-card-title', 'ks-input-group', 'ks-btn', 'ks-form', 'ks-form-item', 'ks-input-group', 'ks-btn', 'ks-input-group', 'ks-btn', 'ks-form-item', 'ks-btn', 'ks-card', 'ks-card-title', 'ks-input-group', 'ks-btn', 'ks-card'];
+        }
         var originalEL; //原始节点
         var eleIsSript;
         if (Config.el) {
@@ -3147,7 +3151,7 @@ function debugTime(key) {
         return value.toString().length;
     }
 
-    $.copy = function(text){
+    $.copy = function(text, showTip){
         var textarea = $(document.createElement('textarea'));
         $('body').append(textarea);
         textarea.val(text);
@@ -3155,6 +3159,7 @@ function debugTime(key) {
         textarea.css({position: 'absolute'});
         document.execCommand("Copy");
         textarea.remove();
+        showTip && $.toast('复制成功', 'success', '', 1);
     }
 
     K.focus = function (fun) {
