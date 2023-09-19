@@ -399,3 +399,13 @@ $.KSAadminIframe = function(homeUrl){
     return R.run();
 
 }
+
+/**
+ * 立即跳转到一个页面
+ * @param url 导航地址
+ * @param param object url参数
+ * @param title
+ */
+$.adminOpen = function (url, param, title='') {
+    window.parent.Admins.open(url, 1, title, param);
+}
