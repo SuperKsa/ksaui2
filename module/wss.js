@@ -148,7 +148,7 @@ class WSSClient {
               }
             // 发送数据
             //this.websocket.send(messageString);
-            console.log('发送消息:', message);
+            // console.log('发送消息:', message);
             call && call();
         } else {
             console.warn('WebSocket 连接未打开，无法发送消息', message);
